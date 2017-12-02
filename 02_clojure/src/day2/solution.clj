@@ -21,8 +21,7 @@
 
 (defn calculate-table-sum
   ([table row-accumulator]
-   (calculate-table-sum table row-accumulator 0)
-    )
+   (calculate-table-sum table row-accumulator 0))
   ([table row-accumulator sum]
    (if-let [[row & table] (seq table)]
      (recur table row-accumulator (+ sum (row-accumulator row)))
@@ -33,13 +32,11 @@
   (- (apply max row) (apply min row)))
 
 ; Used for part 2
-(defn evenly-divisible? [[number divisor]]
-  (zero? (mod number divisor)))
 (defn combinations-in-row [row]
-  (concat (combo/combinations row 2)
-          (map reverse (combo/combinations row 2))))
+    (concat (combo/combinations row 2)
+            (map reverse (combo/combinations row 2))))
 (defn evenly-divisible-in-row [row]
-  (filter #(or (evenly-divisible? %))
+  (filter #(zero? (apply mod %))
           (combinations-in-row row)))
 (defn even-fraction-in-row [row]
   (apply / (first (evenly-divisible-in-row row))))
