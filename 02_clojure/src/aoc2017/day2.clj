@@ -1,4 +1,4 @@
-(ns day2.solution
+(ns aoc2017.day2
   (:require [clojure.math.combinatorics :as combo]))
 
 (def input
