@@ -1,39 +1,26 @@
 (ns aoc2017.day3
-  (:require [clojure.math.combinatorics :as combo])
   (:use clojure.test))
-
-; Note: tests disabled since the spiral is clockwise instead of counter-clockwise
 
 (def input 312051)
 
 (defn abs [n] (max n (- n)))
 
-(with-test
-  (defn step [[x y]]
-      (if (and (<= (abs x) (abs y))
-               (or (not= x y) (>= x 0)))
-        (list (if (>= y 0) (inc x) (dec x)) y)
-        (list x (if (>= x 0) (dec y) (inc y)))))
-  (is (= '(1 0) (step '(0 0))))
-  (is (= '(1 1) (step '(1 0))))
-  (is (= '(0 1) (step '(1 1))))
-  (is (= '(-1 0) (step '(-1 1))))
-  (is (= '(0 -1) (step '(-1 -1))))
-  (is (= '(-2 1) (step '(-2 2)))))
-
-; (test #'step)
-
 ; Part 1
 
 (with-test
   (defn pos-to-coord [n]
-    (loop [p '(0 0)
-           m 0]
-      (if (< m (dec n))
-        (recur
-          (step p)
-          (inc m))
-        p)))
+    (loop [x 0 y 0
+           dx 0 dy -1
+           s 0]
+      (if (< s (dec n))
+        (if (or (= x y)
+                (and (< x 0)
+                     (= x (- y)))
+                (and (> x 0)
+                     (= x (- 1 y))))
+          (recur (+ x (- dy)) (+ y dx) (- dy) dx (inc s))
+          (recur (+ x dx) (+ y dy) dx dy (inc s)))
+        (list x y))))
   (is (= '(0 0) (pos-to-coord 1)))
   (is (= '(1 0) (pos-to-coord 2)))
   (is (= '(1 1) (pos-to-coord 3)))
@@ -41,7 +28,7 @@
   (is (= '(2 1) (pos-to-coord 12)))
   (is (= '(0 -2) (pos-to-coord 23))))
 
-; (test #'pos-to-coord)
+(test #'pos-to-coord)
 
 (with-test
   (defn distance-to-origin [p]
