@@ -4,9 +4,10 @@ import (
 		"strings"
 	"strconv"
 	"reflect"
-	)
+	"fmt"
+)
 
-func CreateBanks(input string) []int {
+func createBanks(input string) []int {
 	fields := strings.Fields(input)
 
 	var banks []int
@@ -21,7 +22,7 @@ func CreateBanks(input string) []int {
 	return banks
 }
 
-func Redistribute(banksHistory [][]int, count int) (cycles int, cyclesBetweenDuplicateState int) {
+func redistribute(banksHistory [][]int, count int) (cycles int, cyclesBetweenDuplicateState int) {
 	previousBanks := banksHistory[len(banksHistory)-1]
 	banks := make([]int, len(previousBanks))
 	copy(banks, previousBanks)
@@ -38,7 +39,7 @@ func Redistribute(banksHistory [][]int, count int) (cycles int, cyclesBetweenDup
 	count++
 	i := find(banksHistory, banks)
 	if i == -1 {
-		return Redistribute(append(banksHistory, banks), count)
+		return redistribute(append(banksHistory, banks), count)
 	} else {
 		return count, count - i
 	}
@@ -64,4 +65,10 @@ func maxBank(previousBanks []int) int {
 	return maxIndex
 }
 
-const Input = "2 8 8 5 4 2 3 1 5 5 1 2 15 13 5 14"
+func Answer() {
+	fmt.Println("-- Day 6 --")
+	cycles, cyclesBetweenDuplicateState := redistribute(append(make([][]int, 0), createBanks(input)), 0)
+	fmt.Printf("cycles=%d, cycles_between_duplicate_state=%d\n\n", cycles, cyclesBetweenDuplicateState)
+}
+
+const input = "2 8 8 5 4 2 3 1 5 5 1 2 15 13 5 14"

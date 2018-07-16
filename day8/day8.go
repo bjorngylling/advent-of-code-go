@@ -111,5 +111,5 @@ func Answer() {
 	}
 
 	fmt.Println("-- Day 8 --")
-	fmt.Printf("highest_register_value_after:%d, highest_register_value_during_run:%d\n", max, overallMax)
+	fmt.Printf("highest_register_value_after=%d, highest_register_value_during_run=%d\n\n", max, overallMax)
 }

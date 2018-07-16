@@ -3,7 +3,7 @@ package day7
 import "testing"
 
 func TestCreateTree(t *testing.T) {
-	tree := CreateTree(sampleInput)
+	tree := createTree(sampleInput)
 
 	if tree.Root.Name != "tknk" {
 		t.Errorf("Expected root node to be tknk, but was %s instead", tree.Root.Name)
@@ -14,7 +14,7 @@ func TestCreateTree(t *testing.T) {
 }
 
 func TestSumWeight(t *testing.T) {
-	tree := CreateTree(sampleInput)
+	tree := createTree(sampleInput)
 
 	if weight := sumWeight(tree.nodeTable["ugml"]); weight != 251 {
 		t.Errorf("Expected the total weight of node ugml to be 251, but was %d instead", weight)
@@ -23,7 +23,7 @@ func TestSumWeight(t *testing.T) {
 
 func TestCalculateChildWeights(t *testing.T) {
 	expected := map[string]int {"ugml": 251, "padx": 243, "fwft": 243}
-	tree := CreateTree(sampleInput)
+	tree := createTree(sampleInput)
 
 	weights := calculateWeights(tree.Root.Children)
 	if l := len(weights); l != 3 {
@@ -38,7 +38,7 @@ func TestCalculateChildWeights(t *testing.T) {
 }
 
 func TestHeaviest(t *testing.T) {
-	tree := CreateTree(sampleInput)
+	tree := createTree(sampleInput)
 
 	if n := heaviest(calculateWeights(tree.Root.Children)); n.node.Name != "ugml" {
 		t.Errorf("Expected the heaviest child to be ugml, but was %s instead", n.node.Name)
@@ -46,7 +46,7 @@ func TestHeaviest(t *testing.T) {
 }
 
 func TestLightest(t *testing.T) {
-	tree := CreateTree(sampleInput)
+	tree := createTree(sampleInput)
 
 	if n := lightest(calculateWeights(tree.Root.Children)); n.node.Name != "padx" {
 		t.Errorf("Expected the heaviest child to be ugml, but was %s instead", n.node.Name)
@@ -54,9 +54,9 @@ func TestLightest(t *testing.T) {
 }
 
 func TestFindOverweightNode(t *testing.T) {
-	tree := CreateTree(sampleInput)
+	tree := createTree(sampleInput)
 
-	node, weightDifference := FindOverweightNode(tree.Root)
+	node, weightDifference := findOverweightNode(tree.Root)
 	if node.Name != "ugml" {
 		t.Errorf("Expected overweight node to be ugml, but was %s instead", node.Name)
 	}

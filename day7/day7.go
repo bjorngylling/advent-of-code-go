@@ -9,38 +9,38 @@ import (
 	"math"
 )
 
-type Node struct {
+type node struct {
 	Name     string
 	Weight   int
-	Children []*Node
+	Children []*node
 }
 
-type Tree struct {
-	nodeTable map[string]*Node
-	Root *Node
+type tree struct {
+	nodeTable map[string]*node
+	Root *node
 }
 
-func (tree *Tree) add(name string, weight int, children []string) {
-	node, prs := tree.nodeTable[name]
+func (tree *tree) add(name string, weight int, children []string) {
+	n, prs := tree.nodeTable[name]
 	if !prs {
-		node = &Node{Name: name, Weight: weight, Children: []*Node{}}
+		n = &node{Name: name, Weight: weight, Children: []*node{}}
 	}
 
 	for _, childName := range children {
 		childNode, prs := tree.nodeTable[childName]
 		if !prs {
-			childNode = &Node{Name: childName, Children: []*Node{}}
+			childNode = &node{Name: childName, Children: []*node{}}
 			tree.nodeTable[childNode.Name] = childNode
 		}
-		node.Children = append(node.Children, childNode)
+		n.Children = append(n.Children, childNode)
 	}
-	node.Weight = weight
+	n.Weight = weight
 
-	tree.nodeTable[node.Name] = node
+	tree.nodeTable[n.Name] = n
 	tree.updateRootNode()
 }
 
-func (tree *Tree) updateRootNode() {
+func (tree *tree) updateRootNode() {
 	allChildren := make(map[string]struct{}, len(tree.nodeTable) - 1)
 	for _, node := range tree.nodeTable {
 		for _, child := range node.Children {
@@ -56,16 +56,16 @@ func (tree *Tree) updateRootNode() {
 	}
 }
 
-func walk(node *Node, f func(node *Node)) {
+func walk(node *node, f func(node *node)) {
 	f(node)
 	for _, child := range node.Children {
 		walk(child, f)
 	}
 }
 
-func sumWeight(node *Node) int {
+func sumWeight(n *node) int {
 	sum := 0
-	walk(node, func(n *Node) {
+	walk(n, func(n *node) {
 		sum += n.Weight
 	})
 	return sum
@@ -84,7 +84,7 @@ func parseLine(line string) (name string, weight int, children []string, err err
 
 type weightAndNode struct {
 	weight int
-	node *Node
+	node *node
 }
 
 func heaviest(is []weightAndNode) weightAndNode {
@@ -117,13 +117,13 @@ func equalWeight(is []weightAndNode) bool {
 
 // Given there is one (and only one) node in the tree that is unbalancing the tree, i.e. is too heavy,
 // this method will return that node and much its weight differs from the sibling nodes
-func FindOverweightNode(node *Node) (*Node, int) {
+func findOverweightNode(node *node) (*node, int) {
 	// Skip nodes without children and continue directly to the child if there is only one child
 	switch len(node.Children) {
 	case 0:
 		return nil, 0
 	case 1:
-		return FindOverweightNode(node.Children[0])
+		return findOverweightNode(node.Children[0])
 	}
 
 	// Calculate the weight of all children, including their children
@@ -136,14 +136,14 @@ func FindOverweightNode(node *Node) (*Node, int) {
 
 	// Continue with the 'fat' node
 	heaviest := heaviest(childWeights)
-	n, w := FindOverweightNode(heaviest.node)
+	n, w := findOverweightNode(heaviest.node)
 	if n == heaviest.node {
 		return n, heaviest.weight - lightest(childWeights).weight
 	}
 	return n, w
 }
 
-func calculateWeights(children []*Node) []weightAndNode {
+func calculateWeights(children []*node) []weightAndNode {
 	weightTable := make([]weightAndNode, len(children))
 	for i, n := range children {
 		weightTable[i] = weightAndNode{sumWeight(n), n}
@@ -151,8 +151,8 @@ func calculateWeights(children []*Node) []weightAndNode {
 	return weightTable
 }
 
-func CreateTree(input string) *Tree {
-	tree := &Tree{nodeTable: map[string]*Node{}}
+func createTree(input string) *tree {
+	tree := &tree{nodeTable: map[string]*node{}}
 	scanner := bufio.NewScanner(strings.NewReader(input))
 	for scanner.Scan() {
 		name, weight, children, err := parseLine(scanner.Text())
@@ -167,6 +167,15 @@ func CreateTree(input string) *Tree {
 	}
 
 	return tree
+}
+
+func Answer() {
+	fmt.Println("-- Day 7 --")
+	tree := createTree(Input)
+	fmt.Printf("root_node=%s\n", tree.Root.Name)
+	overweight, by := findOverweightNode(tree.Root)
+	fmt.Printf("overweight_node=%s, overweight_by=%d, ideal_weight=%d\n\n",
+		overweight.Name, by, overweight.Weight - by)
 }
 
 const Input = `llyhqfe (21)
