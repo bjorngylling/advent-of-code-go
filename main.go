@@ -5,6 +5,7 @@ import (
 
 	"./day6"
 	"./day7"
+	"github.com/bjorngylling/advent-of-code-2017/day8"
 )
 
 func main() {
@@ -17,7 +18,9 @@ func main() {
 	tree := day7.CreateTree(day7.Input)
 	fmt.Printf("root_node:%s\n", tree.Root.Name)
 	overweight, by := day7.FindOverweightNode(tree.Root)
-	fmt.Printf("overweight_node:%s, overweight_by:%d, ideal_weight:%d",
+	fmt.Printf("overweight_node:%s, overweight_by:%d, ideal_weight:%d\n",
 		overweight.Name, by, overweight.Weight - by)
 	fmt.Println()
+
+	day8.Answer()
 }
