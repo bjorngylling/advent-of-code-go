@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"log"
-	"io"
 	"bufio"
+	"fmt"
+	"io"
+	"log"
+	"os"
 )
 
 func main() {
@@ -24,32 +24,27 @@ func main() {
 }
 
 func process(input string) (int, int) {
-	score, garbageCount, depth := 0, 0, 1
-	skip, inGarbage := false, false
+	var score, garbageCount, depth int
+	var skip, inGarbage bool
 	for _, r := range input {
-		if skip {
+		switch {
+		case skip:
 			skip = false
 			continue
-		}
-		if !inGarbage {
-			switch r {
-			case '{':
-				score += depth
-				depth++
-			case '}':
-				depth--
-			case '<':
-				inGarbage = true
-			}
-		} else if r == '>' {
+		case !inGarbage && r == '{':
+			depth++
+			score += depth
+		case !inGarbage && r == '}':
+			depth--
+		case !inGarbage && r == '<':
+			inGarbage = true
+		case inGarbage && r == '>':
 			inGarbage = false
-		} else if r != '!' {
+		case inGarbage && r != '!':
 			garbageCount++
 		}
 
-		if r == '!' {
-			skip = true
-		}
+		skip = r == '!'
 	}
 	return score, garbageCount
 }

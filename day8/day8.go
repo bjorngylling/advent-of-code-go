@@ -62,13 +62,12 @@ func (cpu *cpu) run(r io.Reader) (int, error) {
 	scanner := bufio.NewScanner(r)
 	maxRes := 0
 	for scanner.Scan() {
-		if instr, err := parseLine(scanner.Text()); err == nil {
-			res := cpu.eval(instr)
-			if res > maxRes {
-				maxRes = res
-			}
-		} else {
+		instr, err := parseLine(scanner.Text())
+		if err != nil {
 			return maxRes, err
+		}
+		if res := cpu.eval(instr); res > maxRes {
+			maxRes = res
 		}
 	}
 
