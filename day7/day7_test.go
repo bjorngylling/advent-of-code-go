@@ -22,7 +22,7 @@ func TestSumWeight(t *testing.T) {
 }
 
 func TestCalculateChildWeights(t *testing.T) {
-	expected := map[string]int {"ugml": 251, "padx": 243, "fwft": 243}
+	expected := map[string]int{"ugml": 251, "padx": 243, "fwft": 243}
 	tree := createTree(sampleInput)
 
 	weights := calculateWeights(tree.Root.Children)

@@ -1,10 +1,10 @@
 package main
 
 import (
-		"strings"
-	"strconv"
-	"reflect"
 	"fmt"
+	"reflect"
+	"strconv"
+	"strings"
 )
 
 func createBanks(input string) []int {
@@ -33,7 +33,7 @@ func redistribute(banksHistory [][]int, count int) (cycles int, cyclesBetweenDup
 
 	for ; maxValue > 0; maxValue-- {
 		index++
-		banks[index % len(banks)]++
+		banks[index%len(banks)]++
 	}
 
 	count++

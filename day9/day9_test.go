@@ -1,7 +1,7 @@
 package main
 
 import (
-"testing"
+	"testing"
 )
 
 func assertEqual(t *testing.T, a interface{}, b interface{}) {

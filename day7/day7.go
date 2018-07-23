@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"bufio"
-	"strings"
+	"fmt"
+	"math"
 	"os"
 	"strconv"
-	"math"
+	"strings"
 )
 
 type node struct {
@@ -17,7 +17,7 @@ type node struct {
 
 type tree struct {
 	nodeTable map[string]*node
-	Root *node
+	Root      *node
 }
 
 func (tree *tree) add(name string, weight int, children []string) {
@@ -41,7 +41,7 @@ func (tree *tree) add(name string, weight int, children []string) {
 }
 
 func (tree *tree) updateRootNode() {
-	allChildren := make(map[string]struct{}, len(tree.nodeTable) - 1)
+	allChildren := make(map[string]struct{}, len(tree.nodeTable)-1)
 	for _, node := range tree.nodeTable {
 		for _, child := range node.Children {
 			allChildren[child.Name] = struct{}{}
@@ -84,7 +84,7 @@ func parseLine(line string) (name string, weight int, children []string, err err
 
 type weightAndNode struct {
 	weight int
-	node *node
+	node   *node
 }
 
 func heaviest(is []weightAndNode) weightAndNode {
@@ -175,7 +175,7 @@ func main() {
 	fmt.Printf("root_node=%s\n", tree.Root.Name)
 	overweight, by := findOverweightNode(tree.Root)
 	fmt.Printf("overweight_node=%s, overweight_by=%d, ideal_weight=%d\n",
-		overweight.Name, by, overweight.Weight - by)
+		overweight.Name, by, overweight.Weight-by)
 }
 
 const Input = `llyhqfe (21)

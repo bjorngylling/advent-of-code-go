@@ -2,28 +2,32 @@ package main
 
 import (
 	"bufio"
-	"strings"
-			"strconv"
-	"io"
-	"os"
 	"fmt"
+	"io"
 	"log"
+	"os"
+	"strconv"
+	"strings"
 )
 
 type instrOperation func(int, int) int
+
 var instrOperations = map[string]instrOperation{
-	"inc" : func(l int, r int) int { return l + r },
-	"dec" : func(l int, r int) int { return l - r },
+	"inc": func(l int, r int) int { return l + r },
+	"dec": func(l int, r int) int { return l - r },
 }
+
 type boolOperation func(int, int) bool
+
 var boolOperations = map[string]boolOperation{
-	"==" : func(l int, r int) bool { return l == r },
-	"!=" : func(l int, r int) bool { return l != r },
-	"<" : func(l int, r int) bool { return l < r },
-	"<=" : func(l int, r int) bool { return l <= r },
-	">" : func(l int, r int) bool { return l > r },
-	">=" : func(l int, r int) bool { return l >= r },
+	"==": func(l int, r int) bool { return l == r },
+	"!=": func(l int, r int) bool { return l != r },
+	"<":  func(l int, r int) bool { return l < r },
+	"<=": func(l int, r int) bool { return l <= r },
+	">":  func(l int, r int) bool { return l > r },
+	">=": func(l int, r int) bool { return l >= r },
 }
+
 const (
 	instrReg = iota
 	instrOperator
@@ -67,7 +71,7 @@ func (cpu *cpu) run(r io.Reader) (int, error) {
 			return maxRes, err
 		}
 	}
-	
+
 	return maxRes, scanner.Err()
 }
 
@@ -79,11 +83,11 @@ func parseLine(ln string) (instr, error) {
 
 	return instr{
 		Reg: tok[instrReg],
-		Op: instrOperations[tok[instrOperator]],
+		Op:  instrOperations[tok[instrOperator]],
 		Val: instrVal,
-		Cond: cond {
+		Cond: cond{
 			Reg: tok[condReg],
-			Op: boolOperations[tok[condOperator]],
+			Op:  boolOperations[tok[condOperator]],
 			Val: condVal,
 		},
 	}, err
