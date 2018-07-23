@@ -1,4 +1,4 @@
-package day8
+package main
 
 import (
 	"bufio"
@@ -95,7 +95,7 @@ func (cpu *cpu) eval(instr instr) int {
 	return cpu.Registers[instr.Reg]
 }
 
-func Answer() {
+func main() {
 	cpu := newCPU()
 	file, err := os.Open("./day8/day8_input")
 	if err != nil {
@@ -111,5 +111,5 @@ func Answer() {
 	}
 
 	fmt.Println("-- Day 8 --")
-	fmt.Printf("highest_register_value_after=%d, highest_register_value_during_run=%d\n\n", max, overallMax)
+	fmt.Printf("highest_register_value_after=%d, highest_register_value_during_run=%d\n", max, overallMax)
 }

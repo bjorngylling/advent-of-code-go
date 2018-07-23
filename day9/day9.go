@@ -1,4 +1,4 @@
-package day9
+package main
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"bufio"
 )
 
-func Answer() {
+func main() {
 	file, err := os.Open("./day9/day9_input")
 	if err != nil {
 		log.Fatal(err)
@@ -20,7 +20,7 @@ func Answer() {
 	input := scanner.Text()
 	groupScore, garbageCount := process(input)
 	fmt.Println("-- Day 9 --")
-	fmt.Printf("group_score=%d,garbage_count=%d\n\n", groupScore, garbageCount)
+	fmt.Printf("group_score=%d,garbage_count=%d\n", groupScore, garbageCount)
 }
 
 func process(input string) (int, int) {

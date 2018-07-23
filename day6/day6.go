@@ -1,4 +1,4 @@
-package day6
+package main
 
 import (
 		"strings"
@@ -65,10 +65,10 @@ func maxBank(previousBanks []int) int {
 	return maxIndex
 }
 
-func Answer() {
+func main() {
 	fmt.Println("-- Day 6 --")
 	cycles, cyclesBetweenDuplicateState := redistribute(append(make([][]int, 0), createBanks(input)), 0)
-	fmt.Printf("cycles=%d, cycles_between_duplicate_state=%d\n\n", cycles, cyclesBetweenDuplicateState)
+	fmt.Printf("cycles=%d, cycles_between_duplicate_state=%d\n", cycles, cyclesBetweenDuplicateState)
 }
 
 const input = "2 8 8 5 4 2 3 1 5 5 1 2 15 13 5 14"

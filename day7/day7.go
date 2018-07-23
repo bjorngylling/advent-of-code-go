@@ -1,4 +1,4 @@
-package day7
+package main
 
 import (
 	"fmt"
@@ -169,12 +169,12 @@ func createTree(input string) *tree {
 	return tree
 }
 
-func Answer() {
+func main() {
 	fmt.Println("-- Day 7 --")
 	tree := createTree(Input)
 	fmt.Printf("root_node=%s\n", tree.Root.Name)
 	overweight, by := findOverweightNode(tree.Root)
-	fmt.Printf("overweight_node=%s, overweight_by=%d, ideal_weight=%d\n\n",
+	fmt.Printf("overweight_node=%s, overweight_by=%d, ideal_weight=%d\n",
 		overweight.Name, by, overweight.Weight - by)
 }
 
