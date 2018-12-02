@@ -35,7 +35,7 @@ func findFirstDuplicateFrequency(changes []string) int {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("day1/day1_input.txt")
+	fileContent, err := ioutil.ReadFile("01_chronal_calibration/day1_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
