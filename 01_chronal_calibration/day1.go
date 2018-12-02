@@ -8,30 +8,26 @@ import (
 	"strings"
 )
 
-func calculateFrequency(changes []string) int {
-	result := 0
-	for _, change := range changes {
-		change, _ := strconv.Atoi(change)
-		result = result + change
+func calculateFrequency(changes []string) (result int) {
+	for _, d := range changes {
+		d, _ := strconv.Atoi(d)
+		result += d
 	}
-	return result
+	return
 }
 
-func findFirstDuplicateFrequency(changes []string) int {
-	freqs := make(map[int]bool)
-	curFreq := 0
-
-	for i := 0; !freqs[curFreq]; i++ {
-		freqs[curFreq] = true
-
-		change, _ := strconv.Atoi(changes[i%len(changes)])
-		curFreq = curFreq + change
-		if freqs[curFreq] {
-			break
-		}
+func findFirstDuplicateFrequency(changes []string) (result int) {
+	freqs := make(map[int]struct{})
+	for i := 0; !has(freqs, result); i++ {
+		freqs[result] = struct{}{}
+		d, _ := strconv.Atoi(changes[i%len(changes)])
+		result += d
 	}
-
-	return curFreq
+	return
+}
+func has(set map[int]struct{}, k int) (present bool) {
+	_, present = set[k]
+	return
 }
 
 func main() {
