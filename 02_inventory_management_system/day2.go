@@ -7,12 +7,19 @@ import (
 	"strings"
 )
 
+/*
+	Note that many of the iteration over strings iterate over the
+	bytes instead of runes. This is generally a bad idea since it
+	will only work for ASCII characters. Given the controlled
+	input I decided to take that shortcut.
+*/
+
 func generateChecksum(ids []string) int {
 	var twos, threes int
 	for _, id := range ids {
-		occurrences := make(map[rune]int)
-		for _, r := range id {
-			occurrences[r] += 1
+		occurrences := make(map[byte]int)
+		for i := 0; i < len(id); i++ {
+			occurrences[id[i]] += 1
 		}
 		var foundTwos, foundThrees bool
 		for _, v := range occurrences {
