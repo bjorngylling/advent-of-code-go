@@ -8,18 +8,13 @@ import (
 )
 
 func generateChecksum(ids []string) int {
-	twos, threes := 0, 0
-
+	var twos, threes int
 	for _, id := range ids {
 		occurrences := make(map[rune]int)
 		for _, r := range id {
-			if _, ok := occurrences[r]; !ok {
-				occurrences[r] = 1
-			} else {
-				occurrences[r]++
-			}
+			occurrences[r] += 1
 		}
-		foundTwos, foundThrees := false, false
+		var foundTwos, foundThrees bool
 		for _, v := range occurrences {
 			if !foundTwos && v == 2 {
 				twos++
