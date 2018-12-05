@@ -117,8 +117,8 @@ func main() {
 
 	id := sleepiestGuard(events)
 	min := mostCommonSleepingMinute(events[id]).min
-	fmt.Printf("Day 3 part 1 result: id=%d minute=%d answer=%d\n", id, min, id*min)
+	fmt.Printf("Day 4 part 1 result: id=%d minute=%d answer=%d\n", id, min, id*min)
 
 	id, min = guardMostFrequentAsleepMinute(events)
-	fmt.Printf("Day 3 part 2 result: id=%d minute=%d answer=%d\n", id, min, id*min)
+	fmt.Printf("Day 4 part 2 result: id=%d minute=%d answer=%d\n", id, min, id*min)
 }

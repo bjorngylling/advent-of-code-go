@@ -99,7 +99,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Day 3 part 1 result: %+v\n", len(allReactions3(string(fileContent))))
+	fmt.Printf("Day 5 part 1 result: %+v\n", len(allReactions3(string(fileContent))))
 
-	fmt.Printf("Day 3 part 2 result: %+v\n", len(shortestPolymer(allReactions3(string(fileContent)))))
+	fmt.Printf("Day 5 part 2 result: %+v\n", len(shortestPolymer(allReactions3(string(fileContent)))))
 }
