@@ -44,11 +44,6 @@ func findBounds(pts []image.Point) image.Rectangle {
 	return image.Rect(minX, minY, maxX, maxY)
 }
 
-func onBounds(pt image.Point, bounds image.Rectangle) bool {
-	return pt.X == bounds.Min.X || pt.X == bounds.Max.X ||
-		pt.Y == bounds.Min.Y || pt.Y == bounds.Max.Y
-}
-
 func manhattanDistance(a, b image.Point) int {
 	return abs(b.X-a.X) + abs(b.Y-a.Y)
 }
