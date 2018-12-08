@@ -45,7 +45,7 @@ func parseInput(lines []string) map[string]*Node {
 	return lookupTbl
 }
 
-func findRootNodes(nodeTbl map[string]*Node) map[string]*Node {
+func findRootNodes(nodeTbl map[string]*Node) []*Node {
 	rootNodes := make(map[string]*Node)
 	for k, n := range nodeTbl {
 		rootNodes[k] = n
@@ -55,7 +55,12 @@ func findRootNodes(nodeTbl map[string]*Node) map[string]*Node {
 			delete(rootNodes, e.Name)
 		}
 	}
- 	return rootNodes
+	var r []*Node
+	for _, n := range rootNodes {
+		r = append(r, n)
+	}
+	sortNodeList(r)
+	return r
 }
 
 func nodeListToString(l []*Node) (s string) {
@@ -74,23 +79,11 @@ func sortNodeList(l []*Node) {
 func workOrder(nodeTbl map[string]*Node) (l []*Node) {
 	rootNodes := findRootNodes(nodeTbl)
 	for len(rootNodes) > 0 {
-		var nodeNames []string
-		for k := range rootNodes{
-			nodeNames = append(nodeNames, k)
-		}
-		sort.Strings(nodeNames)
-		k := nodeNames[0]
-		delete(rootNodes, k)
-		l = append(l, nodeTbl[k])
-		sortNodeList(nodeTbl[k].Edges)
-		for i := len(nodeTbl[k].Edges) - 1; i >= 0; i-- {
-			n := nodeTbl[k].Edges[i]
-			nodeTbl[k].Edges = append(nodeTbl[k].Edges[:i], nodeTbl[k].Edges[i+1:]...)
-			t := findRootNodes(nodeTbl)
-			if _, ok := t[n.Name]; ok {
-				rootNodes[n.Name] = n
-			}
-		}
+		k := rootNodes[0]
+		rootNodes = rootNodes[1:]
+		delete(nodeTbl, k.Name)
+		l = append(l, k)
+		rootNodes = findRootNodes(nodeTbl)
 	}
 	return
 }

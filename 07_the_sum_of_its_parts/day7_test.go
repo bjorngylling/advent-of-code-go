@@ -41,13 +41,13 @@ func TestParseInput(t *testing.T) {
 
 func TestFindRootNodes(t *testing.T) {
 	result := findRootNodes(parseInput(data))
-	if result["C"].Name != "C" {
+	if result[0].Name != "C" {
 		t.Errorf("Expected root node to be C but was %+v", result)
 	}
 
 	result = findRootNodes(parseInput(append(data, "Step Q must be finished before step A can begin.")))
-	if result["C"].Name != "C" && result["Q"].Name != "Q" {
-		t.Errorf("Expected root nodes to be C and Q but was %+v", result)
+	if result[0].Name != "C" && result[1].Name != "Q" {
+		t.Errorf("Expected root nodes to be C and Q but was %+v", nodeListToString(result))
 	}
 }
 
