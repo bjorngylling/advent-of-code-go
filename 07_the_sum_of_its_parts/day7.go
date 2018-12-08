@@ -45,19 +45,23 @@ func parseInput(lines []string) map[string]*Node {
 	return lookupTbl
 }
 
-func findRootNodes(nodeTbl map[string]*Node) []*Node {
-	rootNodes := make(map[string]*Node)
+func findRootNodes(nodeTbl map[string]*Node, ignore map[*Node]struct{}) []*Node {
+	rootNodes := make(map[string]struct{})
 	for k, n := range nodeTbl {
-		rootNodes[k] = n
+		if _, ok := ignore[n]; !ok {
+			rootNodes[k] = struct{}{}
+		}
 	}
 	for _, n := range nodeTbl {
-		for _, e := range n.Edges {
-			delete(rootNodes, e.Name)
+		if _, ok := ignore[n]; !ok {
+			for _, e := range n.Edges {
+				delete(rootNodes, e.Name)
+			}
 		}
 	}
 	var r []*Node
-	for _, n := range rootNodes {
-		r = append(r, n)
+	for k := range rootNodes {
+		r = append(r, nodeTbl[k])
 	}
 	sortNodeList(r)
 	return r
@@ -77,13 +81,61 @@ func sortNodeList(l []*Node) {
 }
 
 func workOrder(nodeTbl map[string]*Node) (l []*Node) {
-	rootNodes := findRootNodes(nodeTbl)
+	handled := make(map[*Node]struct{})
+	rootNodes := findRootNodes(nodeTbl, handled)
 	for len(rootNodes) > 0 {
 		k := rootNodes[0]
 		rootNodes = rootNodes[1:]
-		delete(nodeTbl, k.Name)
+		handled[k] = struct{}{}
 		l = append(l, k)
-		rootNodes = findRootNodes(nodeTbl)
+		rootNodes = findRootNodes(nodeTbl, handled)
+	}
+	return
+}
+
+type Task struct {
+	step     *Node
+	timeLeft int
+}
+
+func (t *Task) process() {
+	t.timeLeft -= 1
+}
+
+func estimateTime(nodeTbl map[string]*Node, workerCount int, baseTime int) (t int) {
+	completed := make(map[*Node]struct{})
+	assigned := make(map[*Node]struct{})
+	workers := make([]*Task, workerCount)
+	steps := findRootNodes(nodeTbl, completed)
+	// while there are steps to complete
+	for len(completed) < len(nodeTbl) {
+		// assign steps to workers
+		for i, w := range workers {
+			if w == nil { // only idle workers
+				for _, s := range steps { // find unassigned step and assign it
+					if _, ok := assigned[s]; !ok {
+						workers[i] = &Task{s, baseTime + int(s.Name[0]) - 64}
+						assigned[s] = struct{}{}
+						break // move on to the next worker
+					}
+				}
+			}
+		}
+		// process all workers
+		for _, w := range workers {
+			if w != nil {
+				w.process()
+			}
+		}
+		// free up completed workers
+		for i, w := range workers {
+			if w != nil && w.timeLeft <= 0 {
+				workers[i] = nil
+				completed[w.step] = struct{}{}
+			}
+		}
+		steps = findRootNodes(nodeTbl, completed)
+		t += 1
 	}
 	return
 }
@@ -93,9 +145,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	data := parseInput(strings.Split(string(fileContent), "\n"))
 
-	fmt.Printf("Day 7 part 1 result: %+v\n", nodeListToString(workOrder(data)))
+	fmt.Printf("Day 7 part 1 result: %+v\n", nodeListToString(workOrder(
+		parseInput(strings.Split(string(fileContent), "\n")))))
 
-	fmt.Printf("Day 7 part 2 result: %+v\n", nil)
+	fmt.Printf("Day 7 part 2 result: %+v\n", estimateTime(
+		parseInput(strings.Split(string(fileContent), "\n")), 5, 60))
 }

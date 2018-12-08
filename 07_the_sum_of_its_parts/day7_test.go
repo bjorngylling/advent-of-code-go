@@ -40,12 +40,13 @@ func TestParseInput(t *testing.T) {
 }
 
 func TestFindRootNodes(t *testing.T) {
-	result := findRootNodes(parseInput(data))
+	result := findRootNodes(parseInput(data), make(map[*Node]struct{}))
 	if result[0].Name != "C" {
 		t.Errorf("Expected root node to be C but was %+v", result)
 	}
 
-	result = findRootNodes(parseInput(append(data, "Step Q must be finished before step A can begin.")))
+	result = findRootNodes(parseInput(append(data, "Step Q must be finished before step A can begin.")),
+		make(map[*Node]struct{}))
 	if result[0].Name != "C" && result[1].Name != "Q" {
 		t.Errorf("Expected root nodes to be C and Q but was %+v", nodeListToString(result))
 	}
@@ -62,6 +63,25 @@ func TestWorkOrder(t *testing.T) {
 	expected = "CFQABDE"
 	if result != expected {
 		t.Errorf("Expected step order to be %q but was %q", expected, result)
+	}
+}
+
+func TestEstimateTime(t *testing.T) {
+	result := estimateTime(parseInput(data), 2, 0)
+	expected := 15
+	if result != expected {
+		t.Errorf("Expected estimated time to be %d but was %d", expected, result)
+	}
+
+	result = estimateTime(parseInput(data), 2, 1)
+	expected = 20
+	if result != expected {
+		t.Errorf("Expected estimated time to be %d but was %d", expected, result)
+	}
+	result = estimateTime(parseInput(data), 2, 5)
+	expected = 38
+	if result != expected {
+		t.Errorf("Expected estimated time to be %d but was %d", expected, result)
 	}
 }
 
