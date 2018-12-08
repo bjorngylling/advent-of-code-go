@@ -38,3 +38,12 @@ func TestSumData(t *testing.T) {
 		t.Errorf("Expected sumData to be %d but was %d\n", expected, result)
 	}
 }
+
+func TestNodeValue(t *testing.T) {
+	_, rootNode := buildTree(parseLine(data))
+	result := nodeValue(rootNode)
+	expected := 66
+	if result != expected {
+		t.Errorf("Expected nodeValue to be %d but was %d\n", expected, result)
+	}
+}

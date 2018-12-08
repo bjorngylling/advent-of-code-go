@@ -70,6 +70,21 @@ func sumData(node *Node) (sum int) {
 	return
 }
 
+func nodeValue(node *Node) (sum int) {
+	if len(node.Edges) == 0 {
+		for _, d := range node.Data {
+			sum += d
+		}
+	} else {
+		for _, d := range node.Data {
+			if d <= len(node.Edges) {
+				sum += nodeValue(node.Edges[d-1])
+			}
+		}
+	}
+	return
+}
+
 func main() {
 	fileContent, err := ioutil.ReadFile("08_memory_maneuver/day8_input.txt")
 	if err != nil {
@@ -79,5 +94,5 @@ func main() {
 	_, node := buildTree(parseLine(string(fileContent)))
 	fmt.Printf("Day 8 part 1 result: %+v\n", sumData(node))
 
-	fmt.Printf("Day 8 part 2 result: %+v\n", nil)
+	fmt.Printf("Day 8 part 2 result: %+v\n", nodeValue(node))
 }
