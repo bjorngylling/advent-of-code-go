@@ -28,12 +28,12 @@ func TestPowerLevel(t *testing.T) {
 }
 
 func TestGroupPowerLevel(t *testing.T) {
-	result := groupPowerLevel(33, 45, 3, 18)
+	result := groupPowerLevel(33, 45, 3, summedAreaTable(300, 300, 18))
 	expected := 29
 	if result != expected {
 		t.Errorf("Expected group power level for [x=33, y=45 gridSerialNo=18] to be %d, but was %d", expected, result)
 	}
-	result = groupPowerLevel(21, 61, 3, 42)
+	result = groupPowerLevel(21, 61, 3, summedAreaTable(300, 300, 42))
 	expected = 30
 	if result != expected {
 		t.Errorf("Expected group power level for [x=21, y=61 gridSerialNo=42] to be %d, but was %d", expected, result)
@@ -41,10 +41,10 @@ func TestGroupPowerLevel(t *testing.T) {
 }
 
 func TestFindHighestGroupPower(t *testing.T) {
-	x, y := findHighestGroupPower(18)
+	x, y := findHighestGroupPower(3, 18)
 	eX, eY := 33, 45
 	if x != eX && y != eY {
-		t.Errorf("Expected [x=%d y=%d] but was [x=%d y=%d]", x, y, eX, eY)
+		t.Errorf("Expected [x=%d y=%d] but was [x=%d y=%d]", eX, eY, x, y)
 	}
 }
 
@@ -52,6 +52,6 @@ func TestFindMaxGroupPower(t *testing.T) {
 	x, y, s := findMaxGroupPower(18)
 	eX, eY, eS := 90, 269, 16
 	if x != eX && y != eY && s != eS {
-		t.Errorf("Expected [x=%d y=%d s=%d] but was [x=%d y=%d, s%d]", x, y, s, eX, eY, eS)
+		t.Errorf("Expected [x=%d y=%d s=%d] but was [x=%d y=%d, s=%d]", eX, eY, eS, x, y, s)
 	}
 }
