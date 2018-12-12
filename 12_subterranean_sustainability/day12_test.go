@@ -1,57 +1,93 @@
 package main
 
 import (
+	"reflect"
 	"testing"
 )
 
-func TestPowerLevel(t *testing.T) {
-	result := powerLevel(3, 5, 8)
-	expected := 4
-	if result != expected {
-		t.Errorf("Expected power level for [x=3, y=5 gridSerialNo=8] to be %d, but was %d", expected, result)
+var input = `initial state: #..#.#..##......###...###
+
+...## => #
+..#.. => #
+.#... => #
+.#.#. => #
+.#.## => #
+.##.. => #
+.#### => #
+#.#.# => #
+#.### => #
+##.#. => #
+##.## => #
+###.. => #
+###.# => #
+####. => #`
+
+func TestParseInput(t *testing.T) {
+	s, rules := parseInput(input)
+	expected := State{true, false, false, true, false, true, false, false, true, true, false, false, false, false, false, false, true, true, true, false, false, false, true, true, true}
+	if !reflect.DeepEqual(s, expected) {
+		t.Errorf("Expected initial state to be %s but was %s", expected, s)
 	}
-	result = powerLevel(122, 79, 57)
-	expected = -5
-	if result != expected {
-		t.Errorf("Expected power level for [x=122, y=79 gridSerialNo=57] to be %d, but was %d", expected, result)
-	}
-	result = powerLevel(217, 196, 39)
-	expected = 0
-	if result != expected {
-		t.Errorf("Expected power level for [x=217, y=196 gridSerialNo=0] to be %d, but was %d", expected, result)
-	}
-	result = powerLevel(101, 153, 71)
-	expected = 4
-	if result != expected {
-		t.Errorf("Expected power level for [x=101, y=153 gridSerialNo=71] to be %d, but was %d", expected, result)
+	if len(rules) != 14 {
+		t.Errorf("Expected rules to contain 14 rules but contained %d", len(rules))
 	}
 }
 
-func TestGroupPowerLevel(t *testing.T) {
-	result := groupPowerLevel(33, 45, 3, summedAreaTable(300, 300, 18))
-	expected := 29
-	if result != expected {
-		t.Errorf("Expected group power level for [x=33, y=45 gridSerialNo=18] to be %d, but was %d", expected, result)
-	}
-	result = groupPowerLevel(21, 61, 3, summedAreaTable(300, 300, 42))
-	expected = 30
-	if result != expected {
-		t.Errorf("Expected group power level for [x=21, y=61 gridSerialNo=42] to be %d, but was %d", expected, result)
+func TestStateNote(t *testing.T) {
+	s, _ := parseInput(input)
+	r := s.Note(0)
+	expected := Note{false, false, false, false, true}
+	if !reflect.DeepEqual(r, expected) {
+		t.Errorf("Expected Note(0) to be %s but was %s", expected, r)
 	}
 }
 
-func TestFindHighestGroupPower(t *testing.T) {
-	x, y := findHighestGroupPower(3, 18)
-	eX, eY := 33, 45
-	if x != eX && y != eY {
-		t.Errorf("Expected [x=%d y=%d] but was [x=%d y=%d]", eX, eY, x, y)
+func TestStep(t *testing.T) {
+	s, rules := parseInput(input)
+	r, zI := step(s, rules)
+	expected := State{false, true, false, false, false, true, false, false, false, false, true, false, false, false, false, false, true, false, false, true, false, false, true, false, false, true, false}
+	if !reflect.DeepEqual(r, expected) {
+		t.Errorf("Expected state to be %s after 1 step but was %s", expected, r)
+	}
+	if zI != -1 {
+		t.Errorf("Expected zero index diff to be -1 after step 1 but was %d", zI)
+	}
+
+	r, zI = step(r, rules)
+	expected = State{false, true, true, false, false, true, true, false, false, false, true, true, false, false, false, false, true, false, false, true, false, false, true, false, false, true, true, false}
+	if !reflect.DeepEqual(r, expected) {
+		t.Errorf("Expected state to be %s after 2 steps but was %s", expected, r)
+	}
+	if zI != 0 {
+		t.Errorf("Expected zero index diff to be 0 after step 2 but was %d", zI)
+	}
+
+	r, zI = step(r, rules)
+	expected = State{false, true, false, true, false, false, false, true, false, false, true, false, true, false, false, false, false, true, false, false, true, false, false, true, false, false, false, true, false}
+	if !reflect.DeepEqual(r, expected) {
+		t.Errorf("Expected state to be %s after 3 steps but was %s", expected, r)
+	}
+	if zI != -1 {
+		t.Errorf("Expected zero index diff to be -1 after step 3 but was %d", zI)
+	}
+
+	for i := 0; i < 17; i++ {
+		r, zI = step(r, rules)
+	}
+	expected = State{false, true, false, false, false, false, true, true, false, false, false, false, true, true, true, true, true, false, false, false, true, true, true, true, true, true, true, false, false, false, false, true, false, true, false, false, true, true, false}
+	if !reflect.DeepEqual(r, expected) {
+		t.Errorf("Expected state to be %s after 20 steps but was %s", expected, r)
+	}
+	if zI != 0 {
+		t.Errorf("Expected zero index diff to be 0 after step 20 but was %d", zI)
 	}
 }
 
-func TestFindMaxGroupPower(t *testing.T) {
-	x, y, s := findMaxGroupPower(18)
-	eX, eY, eS := 90, 269, 16
-	if x != eX && y != eY && s != eS {
-		t.Errorf("Expected [x=%d y=%d s=%d] but was [x=%d y=%d, s=%d]", eX, eY, eS, x, y, s)
+func TestPlantNumberSumAfterSteps(t *testing.T) {
+	s, rules := parseInput(input)
+	r := plantNumberSumAfterSteps(s, rules, 20)
+	expected := 325
+	if !reflect.DeepEqual(r, expected) {
+		t.Errorf("Expected total number of plants to be %d after 20 generations but was %d", expected, r)
 	}
 }
