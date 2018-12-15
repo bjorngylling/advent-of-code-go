@@ -35,12 +35,16 @@ func parseInput(input string) ([]string, []Cart) {
 				carts = append(carts, Cart{Pos(x, y), North})
 			case rune('>'):
 				carts = append(carts, Cart{Pos(x, y), East})
-			case rune('V'):
+			case rune('v'):
 				carts = append(carts, Cart{Pos(x, y), South})
 			case rune('<'):
 				carts = append(carts, Cart{Pos(x, y), West})
 			}
 		}
+		lines[y] = strings.Replace(lines[y], "^", "|", -1)
+		lines[y] = strings.Replace(lines[y], "v", "|", -1)
+		lines[y] = strings.Replace(lines[y], ">", "-", -1)
+		lines[y] = strings.Replace(lines[y], "<", "-", -1)
 	}
 	return lines, carts
 }
