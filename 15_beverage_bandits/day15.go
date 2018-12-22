@@ -2,93 +2,77 @@ package main
 
 import (
 	"fmt"
-	"image"
+	"github.com/bjorngylling/advent-of-code-2018/15_beverage_bandits/cave"
+	. "github.com/bjorngylling/advent-of-code-2018/15_beverage_bandits/entity"
 	"io/ioutil"
 	"log"
+	"math"
 	"strings"
 )
 
-type EntityType = int
-
-const (
-	GOBLIN EntityType = iota
-	ELF
-)
-
-type Position = image.Point
-
-func Pos(x, y int) Position {
-	return Position{X: x, Y: y}
-}
-
-type Entity struct {
-	Type EntityType
-	Pos  Position
-	HP   int
-	AP   int
-}
-
-func NewEntity(t EntityType, p Position) *Entity {
-	return &Entity{Type: t, Pos: p, HP: 200, AP: 3}
-}
-
-type Entities []*Entity
-
-func (entities Entities) Filter(f func(*Entity) bool) (r Entities) {
-	for _, e := range entities {
-		if f(e) {
-			r = append(r, e)
-		}
-	}
-	return
-}
-
-func (entities Entities) Any(f func(*Entity) bool) bool {
-	for _, e := range entities {
-		if f(e) {
-			return true
-		}
-	}
-	return false
-}
-
-type Cave struct {
-	m      []bool
-	Width  int
-	Height int
-}
-
-func NewCave(w, h int) *Cave {
-	return &Cave{m: make([]bool, w*h), Width: w, Height: h}
-}
-
-func (c *Cave) Blocked(x, y int) bool {
-	return c.m[x+y*c.Width]
-}
-
-func (c *Cave) SetBlocked(x, y int, val bool) {
-	c.m[x+y*c.Width] = val
-}
-
-func parseInput(in string) (*Cave, Entities) {
+func parseInput(in string) (*cave.Cave, Entities) {
 	lines := strings.Split(in, "\n")
-	cave := NewCave(len(lines[0]), len(lines))
+	c := cave.New(len(lines[0]), len(lines))
 	var entities Entities
 
 	for y, ln := range lines {
-		for x, c := range ln {
-			switch c {
+		for x, chr := range ln {
+			switch chr {
 			case '#':
-				cave.SetBlocked(x, y, true)
+				c.SetBlocked(x, y, true)
 			case 'G':
-				entities = append(entities, NewEntity(GOBLIN, Pos(x, y)))
+				entities = append(entities, New(GOBLIN, Pos(x, y)))
 			case 'E':
-				entities = append(entities, NewEntity(ELF, Pos(x, y)))
+				entities = append(entities, New(ELF, Pos(x, y)))
 			}
 		}
 	}
 
-	return cave, entities
+	return c, entities
+}
+
+func neighbours(p Position) [4]Position {
+	return [4]Position{p.Add(Pos(1, 0)), p.Add(Pos(0, 1)),
+		p.Sub(Pos(1, 0)), p.Sub(Pos(0, 1))}
+}
+
+func Dijkstra(cave *cave.Cave, entities Entities, source *Entity) (map[Position]int, map[Position]Position) {
+	q := map[Position]struct{}{source.Pos: {}} // Set containing all unvisited positions
+	dist := map[Position]int{source.Pos: 0}    // Position -> cost to move there from source
+	prev := make(map[Position]Position)        // Position -> previous position
+
+	// Add all unblocked positions to q and set the distance there to "infinity"
+	for y := 0; y < cave.Height; y++ {
+		for x := 0; x < cave.Width; x++ {
+			if !cave.Blocked(x, y) && !entities.Any(At(x, y)) {
+				p := Pos(x, y)
+				q[p] = struct{}{}
+				dist[p] = math.MaxInt32
+			}
+		}
+	}
+	for len(q) > 0 {
+		// Find the unvisited position with the lowest distance from source
+		u := Pos(-1, -1)
+		for pos := range q {
+			if u == Pos(-1, -1) || dist[pos] < dist[u] {
+				u = pos
+			}
+		}
+		delete(q, u)
+
+		// Check all neighbours of u if there is a shorter path there
+		for _, v := range neighbours(u) {
+			if _, ok := q[v]; ok {
+				alt := dist[u] + 1
+				if alt < dist[v] {
+					dist[v] = alt
+					prev[v] = u
+				}
+			}
+		}
+	}
+	return dist, prev
 }
 
 func main() {
