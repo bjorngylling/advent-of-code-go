@@ -15,7 +15,7 @@ var data = `#######
 #######`
 
 func TestParseInput(t *testing.T) {
-	rCave, rEntities := parseInput(data)
+	rCave, rEntities := parseInput(data, 3)
 	if rCave.Width != 7 {
 		t.Errorf("Expected cave width to be 7 but was %+v", rCave.Width)
 	}
@@ -42,7 +42,7 @@ func TestDijkstra(t *testing.T) {
 #56789#
 #######
 `
-	cave, entities := parseInput(data)
+	cave, entities := parseInput(data, 3)
 	dist, _ := Dijkstra(cave, entities, entities[0].Pos)
 	result := ""
 	for y := 0; y < cave.Height; y++ {
@@ -63,7 +63,7 @@ func TestDijkstra(t *testing.T) {
 }
 
 func TestNextStep(t *testing.T) {
-	cave, entities := parseInput(data)
+	cave, entities := parseInput(data, 3)
 	dist, prev := Dijkstra(cave, entities, entities[0].Pos)
 	g := entity.Pos(5, 1)
 	r := nextStep(dist, prev, g)
@@ -85,7 +85,7 @@ func TestNextStep(t *testing.T) {
 #.#.#
 #...#
 #####`
-	cave, entities = parseInput(d)
+	cave, entities = parseInput(d, 3)
 	dist, prev = Dijkstra(cave, entities, entity.Pos(2, 1))
 	g = entity.Pos(2, 4)
 	r = nextStep(dist, prev, g)
@@ -97,7 +97,7 @@ func TestNextStep(t *testing.T) {
 }
 
 func TestRunSimulation1(t *testing.T) {
-	c, entities := parseInput(data)
+	c, entities := parseInput(data, 3)
 	steps := runSimulation(c, entities)
 	entities = entities.Filter(entity.Alive)
 	hpPool := 0
@@ -120,7 +120,7 @@ func TestRunSimulation2(t *testing.T) {
 #...#E#
 #...E.#
 #######`
-	c, entities := parseInput(d)
+	c, entities := parseInput(d, 3)
 	steps := runSimulation(c, entities)
 	entities = entities.Filter(entity.Alive)
 	hpPool := 0
@@ -143,7 +143,7 @@ func TestRunSimulation3(t *testing.T) {
 #G..#.#
 #..E#.#   
 #######`
-	c, entities := parseInput(d)
+	c, entities := parseInput(d, 3)
 	steps := runSimulation(c, entities)
 	entities = entities.Filter(entity.Alive)
 	hpPool := 0
@@ -166,7 +166,7 @@ func TestRunSimulation4(t *testing.T) {
 #G..#.#
 #...E.#
 #######`
-	c, entities := parseInput(d)
+	c, entities := parseInput(d, 3)
 	steps := 0
 	for step(c, entities.Filter(entity.Alive)) {
 		steps++
@@ -192,7 +192,7 @@ func TestRunSimulation5(t *testing.T) {
 #E#G#G#   
 #...#G#
 #######`
-	c, entities := parseInput(d)
+	c, entities := parseInput(d, 3)
 	steps := 0
 	for step(c, entities.Filter(entity.Alive)) {
 		steps++
@@ -220,7 +220,7 @@ func TestRunSimulation6(t *testing.T) {
 #.G...G.#   
 #.....G.#   
 #########`
-	c, entities := parseInput(d)
+	c, entities := parseInput(d, 3)
 	steps := 0
 	for step(c, entities.Filter(entity.Alive)) {
 		steps++
@@ -235,5 +235,15 @@ func TestRunSimulation6(t *testing.T) {
 	}
 	if hpPool != 937 {
 		t.Errorf("Expected winning side HP pool to be 937 but was %d", hpPool)
+	}
+}
+
+func TestRunSimulationCheatingElves1(t *testing.T) {
+	steps, hpPool := runSimulationCheatingElves(data)
+	if steps != 29 {
+		t.Errorf("Expected battle to end after 29 rounds but ended after %d", steps)
+	}
+	if hpPool != 172 {
+		t.Errorf("Expected winning side HP pool to be 172 but was %d", hpPool)
 	}
 }

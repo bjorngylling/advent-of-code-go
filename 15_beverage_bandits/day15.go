@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func parseInput(in string) (*cave.Cave, Entities) {
+func parseInput(in string, elfAP int) (*cave.Cave, Entities) {
 	lines := strings.Split(in, "\n")
 	c := cave.New(len(lines[0]), len(lines))
 	var entities Entities
@@ -20,8 +20,10 @@ func parseInput(in string) (*cave.Cave, Entities) {
 			switch chr {
 			case '#':
 				c.SetBlocked(x, y, true)
-			case 'G', 'E':
-				entities = append(entities, New(chr, Pos(x, y)))
+			case 'G':
+				entities = append(entities, New(chr, Pos(x, y), 3))
+			case 'E':
+				entities = append(entities, New(chr, Pos(x, y), elfAP))
 			}
 		}
 	}
@@ -34,25 +36,6 @@ func neighbours(p Position) [4]Position {
 		p.Add(Pos(1, 0)), p.Add(Pos(0, 1))}
 }
 
-/*
-function Dijkstra(Graph, source):
-   dist[source]  := 0                     // Distance from source to source is set to 0
-   for each vertex v in Graph:            // Initializations
-	   if v ≠ source
-		   dist[v]  := infinity           // Unknown distance function from source to each node set to infinity
-	   add v to Q                         // All nodes initially in Q
-
-  while Q is not empty:                  // The main loop
-	  v := vertex in Q with min dist[v]  // In the first run-through, this vertex is the source node
-	  remove v from Q
-
-	  for each neighbor u of v:           // where neighbor u has not yet been removed from Q.
-		  alt := dist[v] + length(v, u)
-		  if alt < dist[u]:               // A shorter path to u has been found
-			  dist[u]  := alt            // Update distance of u
-
-  return dist[]
-*/
 func Dijkstra(cave *cave.Cave, entities Entities, source Position) (map[Position]int, map[Position]Position) {
 	q := []Position{source}             // List containing all unvisited positions
 	dist := map[Position]int{source: 0} // Position -> cost to move there from source
@@ -184,6 +167,29 @@ func runSimulation(c *cave.Cave, entities Entities) (stepCount int) {
 	return
 }
 
+func runSimulationCheatingElves(data string) (stepCount int, hpPool int) {
+	elfAP := 4
+	c, entities := parseInput(data, elfAP)
+	initialElfCount := len(entities.Filter(OfType(ELF)))
+startSimulation:
+	stepCount = 0
+	for step(c, entities) {
+		stepCount++
+
+		if len(entities.Filter(Alive, OfType(ELF))) < initialElfCount {
+			elfAP += 1
+			c, entities = parseInput(data, elfAP)
+			goto startSimulation
+		}
+	}
+
+	for _, e := range entities.Filter(Alive) {
+		hpPool += e.HP
+	}
+
+	return
+}
+
 func printState(cave *cave.Cave, entities Entities, dist map[Position]int) {
 	var s string
 	for y := 0; y < cave.Height; y++ {
@@ -220,7 +226,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	c, entities := parseInput(string(fileContent))
+	c, entities := parseInput(string(fileContent), 3)
 	steps := runSimulation(c, entities)
 	hpPool := 0
 	for _, e := range entities.Filter(Alive) {
@@ -228,5 +234,6 @@ func main() {
 	}
 	fmt.Printf("Day 15 part 1 result: %+v\n", steps*hpPool)
 
-	fmt.Printf("Day 15 part 2 result: %+v\n", nil)
+	steps, hpPool = runSimulationCheatingElves(string(fileContent))
+	fmt.Printf("Day 15 part 2 result: %+v\n", steps*hpPool)
 }

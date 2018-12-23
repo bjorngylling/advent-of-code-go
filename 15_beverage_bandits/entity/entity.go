@@ -55,8 +55,8 @@ func (entity *Entity) Move(p Position) {
 	entity.Pos = p
 }
 
-func New(t Type, p Position) *Entity {
-	return &Entity{Type: t, Pos: p, HP: 200, AP: 3}
+func New(t Type, p Position, AP int) *Entity {
+	return &Entity{Type: t, Pos: p, HP: 200, AP: AP}
 }
 
 type NotInReachError struct {
@@ -122,6 +122,10 @@ func At(x, y int) func(*Entity) bool {
 
 func NotOfType(t Type) func(*Entity) bool {
 	return func(e *Entity) bool { return e.Type != t }
+}
+
+func OfType(t Type) func(*Entity) bool {
+	return func(e *Entity) bool { return e.Type == t }
 }
 
 func Alive(e *Entity) bool {
