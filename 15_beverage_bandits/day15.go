@@ -7,10 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
-	"os"
-	"runtime/pprof"
 	"strings"
-	"time"
 )
 
 func parseInput(in string) (*cave.Cave, Entities) {
@@ -218,14 +215,6 @@ func printState(cave *cave.Cave, entities Entities, dist map[Position]int) {
 }
 
 func main() {
-	f, err := os.Create("day15.prof")
-	if err != nil {
-		log.Fatal(err)
-	}
-	pprof.StartCPUProfile(f)
-	defer pprof.StopCPUProfile()
-
-	start := time.Now()
 	fileContent, err := ioutil.ReadFile("15_beverage_bandits/day15_input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -240,5 +229,4 @@ func main() {
 	fmt.Printf("Day 15 part 1 result: %+v\n", steps*hpPool)
 
 	fmt.Printf("Day 15 part 2 result: %+v\n", nil)
-	fmt.Println(time.Since(start))
 }
