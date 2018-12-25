@@ -11,7 +11,7 @@ func TestParseSample(t *testing.T) {
 9 2 1 2
 After:  [3, 2, 2, 1]`
 	result := parseSample(input)
-	expected := Sample{Registers{3, 2, 1, 1}, Instr{9, 2, 1, 2}, Registers{3, 2, 2, 1}}
+	expected := Sample{Before: Registers{3, 2, 1, 1}, Instr: Instruction(9, 2, 1, 2), After: Registers{3, 2, 2, 1}}
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("Expected %+v but was %+v", expected, result)
 	}

@@ -88,14 +88,14 @@ func learnOpCodes(samples []Sample) map[int]int {
 	}
 
 	// Reduce potentials by removing duplicates
-	for j := 0; j < len(Ops); j++ {
+	for range Ops {
 		for k, v := range potentials {
 			if len(v) == 1 {
 				for ki, vi := range potentials {
 					if k == ki {
 						continue
 					}
-					if i := findFirst(vi, v[0]); i != -1 {
+					if i, ok := findFirst(vi, v[0]); ok {
 						potentials[ki] = append(vi[:i], vi[i+1:]...)
 					}
 				}
@@ -103,6 +103,7 @@ func learnOpCodes(samples []Sample) map[int]int {
 		}
 	}
 
+	// Create the lookup table
 	result := make(map[int]int, len(Ops))
 	for k, v := range potentials {
 		result[k] = v[0]
@@ -110,21 +111,20 @@ func learnOpCodes(samples []Sample) map[int]int {
 	return result
 }
 
-func findFirst(l []int, n int) int {
+func findFirst(l []int, n int) (int, bool) {
 	for i, p := range l {
 		if n == p {
-			return i
+			return i, true
 		}
 	}
-	return -1
+	return 0, false
 }
 
-func runProgram(opCodeMapping map[int]int, program []Instr) Registers {
-	reg := Registers{0, 0, 0, 0}
+func runProgram(opCodeMapping map[int]int, program []Instr) (reg Registers) {
 	for _, instr := range program {
 		reg = Ops[opCodeMapping[instr.Opcode]](instr, reg)
 	}
-	return reg
+	return
 }
 
 func main() {
