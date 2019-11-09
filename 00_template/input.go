@@ -1,12 +1,10 @@
 package main
 
-type Tests []struct {
+var testPuzzles = []struct {
 	Puzzle    string
 	Solution1 string
 	Solution2 string
-}
-
-var testPuzzles = Tests{
+}{
 	{
 		Puzzle:    "",
 		Solution1: "",
