@@ -29,15 +29,27 @@ func solve(input string) (string, string) {
 	commands := strings.Split(input, ", ")
 	pos := image.Pt(0, 0)
 	dir := NORTH
+	visited := map[image.Point]struct{}{pos: {}}
+	part2 := ""
 	for _, c := range commands {
 		dir = turn(rune(c[0]), dir)
 		steps, err := strconv.Atoi(c[1:])
 		if err != nil {
 			panic(err)
 		}
-		pos = pos.Add(delta[dir].Mul(steps))
+		for i := 0; i < steps; i++ {
+			pos = pos.Add(delta[dir])
+			if _, found := visited[pos]; found && part2 == "" {
+				part2 = distance(pos)
+			}
+			visited[pos] = struct{}{}
+		}
 	}
-	return fmt.Sprint(math.Abs(float64(pos.X)) + math.Abs(float64(pos.Y))), ""
+	return distance(pos), part2
+}
+
+func distance(pos image.Point) string {
+	return fmt.Sprint(math.Abs(float64(pos.X)) + math.Abs(float64(pos.Y)))
 }
 
 func turn(turn rune, dir direction) direction {
