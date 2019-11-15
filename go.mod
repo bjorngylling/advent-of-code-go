@@ -1,3 +1,3 @@
-module github.com/bjorngylling/advent-of-code-2017
+module github.com/bjorngylling/advent-of-code
 
 go 1.13
