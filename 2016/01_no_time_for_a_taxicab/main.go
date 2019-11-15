@@ -19,10 +19,10 @@ const (
 )
 
 var delta = map[direction]image.Point{
-	NORTH: image.Pt(1, 0),
-	EAST:  image.Pt(0, 1),
-	SOUTH: image.Pt(-1, 0),
-	WEST:  image.Pt(0, -1),
+	NORTH: image.Pt(0, 1),
+	EAST:  image.Pt(1, 0),
+	SOUTH: image.Pt(0, -1),
+	WEST:  image.Pt(-1, 0),
 }
 
 func solve(input string) (string, string) {
