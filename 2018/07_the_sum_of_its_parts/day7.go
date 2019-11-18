@@ -141,7 +141,7 @@ func estimateTime(nodeTbl map[string]*Node, workerCount int, baseTime int) (t in
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("07_the_sum_of_its_parts/day7_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/07_the_sum_of_its_parts/day7_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

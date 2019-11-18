@@ -109,7 +109,7 @@ func guardMostFrequentAsleepMinute(eventLog EventLog) (int, int) {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("04_repose_record/day4_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/04_repose_record/day4_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

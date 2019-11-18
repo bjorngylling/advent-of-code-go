@@ -69,7 +69,7 @@ func createWorld(s []string) World {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("03_no_matter_how_you_slice_it/day3_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/03_no_matter_how_you_slice_it/day3_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

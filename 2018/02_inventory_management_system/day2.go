@@ -68,7 +68,7 @@ func findCommonId(ids []string) (result string) {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("02_inventory_management_system/day2_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/02_inventory_management_system/day2_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

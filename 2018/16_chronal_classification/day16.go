@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	. "github.com/bjorngylling/advent-of-code-2018/16_chronal_classification/operations"
+	. "github.com/bjorngylling/advent-of-code/2018/16_chronal_classification/operations"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -128,7 +128,7 @@ func runProgram(opCodeMapping map[int]int, program []Instr) (reg Registers) {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("16_chronal_classification/day16_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/16_chronal_classification/day16_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	. "github.com/bjorngylling/advent-of-code-2018/19_go_with_the_flow/operations"
+	. "github.com/bjorngylling/advent-of-code/2018/19_go_with_the_flow/operations"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -43,7 +43,7 @@ func runProgram(ipIdx int, program []Instr, reg Registers) Registers {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("19_go_with_the_flow/day19_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/19_go_with_the_flow/day19_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

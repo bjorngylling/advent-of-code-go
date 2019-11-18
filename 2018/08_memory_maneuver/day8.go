@@ -86,7 +86,7 @@ func nodeValue(node *Node) (sum int) {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("08_memory_maneuver/day8_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/08_memory_maneuver/day8_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

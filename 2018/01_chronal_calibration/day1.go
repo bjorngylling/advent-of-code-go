@@ -31,7 +31,7 @@ func has(set map[int]struct{}, k int) (present bool) {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("01_chronal_calibration/day1_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/01_chronal_calibration/day1_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

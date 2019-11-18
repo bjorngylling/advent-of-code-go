@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/bjorngylling/advent-of-code-2018/17_reservoir_research/grid"
+	"github.com/bjorngylling/advent-of-code/2018/17_reservoir_research/grid"
 	"image"
 	"io/ioutil"
 	"log"
@@ -135,7 +135,7 @@ func count(w *grid.Grid, p func(grid.Type) bool) (c int) {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("17_reservoir_research/day17_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/17_reservoir_research/day17_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

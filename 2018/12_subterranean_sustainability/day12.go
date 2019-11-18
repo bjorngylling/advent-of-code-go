@@ -104,7 +104,7 @@ func plantNumberSumAfterSteps(s State, r Rules, steps int) int {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("12_subterranean_sustainability/day12_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/12_subterranean_sustainability/day12_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

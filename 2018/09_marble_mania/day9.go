@@ -47,7 +47,7 @@ func score(playerCount, lastMarbleValue int) int {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("09_marble_mania/day9_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/09_marble_mania/day9_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

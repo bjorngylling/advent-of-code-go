@@ -110,7 +110,7 @@ func part2(pts []image.Point, bounds image.Rectangle, maxDist int) (r int) {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("06_chronal_coordinates/day6_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/06_chronal_coordinates/day6_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

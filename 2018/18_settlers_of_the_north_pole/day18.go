@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/bjorngylling/advent-of-code-2018/18_settlers_of_the_north_pole/grid"
+	"github.com/bjorngylling/advent-of-code/2018/18_settlers_of_the_north_pole/grid"
 	"image"
 	"io/ioutil"
 	"log"
@@ -93,7 +93,7 @@ func count(w *grid.Grid, p func(grid.Type) bool) (c int) {
 }
 
 func main() {
-	fileContents, err := ioutil.ReadFile("18_settlers_of_the_north_pole/day18_input.txt")
+	fileContents, err := ioutil.ReadFile("2018/18_settlers_of_the_north_pole/day18_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

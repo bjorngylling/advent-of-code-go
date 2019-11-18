@@ -94,7 +94,7 @@ func shortestPolymer(p string) string {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("05_alchemical_reduction/day5_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/05_alchemical_reduction/day5_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

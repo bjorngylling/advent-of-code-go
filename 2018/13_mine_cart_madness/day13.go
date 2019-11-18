@@ -146,7 +146,7 @@ func lastCart(rail []string, carts []Cart) Cart {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("13_mine_cart_madness/day13_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/13_mine_cart_madness/day13_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

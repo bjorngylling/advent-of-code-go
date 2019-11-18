@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/bjorngylling/advent-of-code-2018/15_beverage_bandits/cave"
-	. "github.com/bjorngylling/advent-of-code-2018/15_beverage_bandits/entity"
+	"github.com/bjorngylling/advent-of-code/2018/15_beverage_bandits/cave"
+	. "github.com/bjorngylling/advent-of-code/2018/15_beverage_bandits/entity"
 	"io/ioutil"
 	"log"
 	"math"
@@ -221,7 +221,7 @@ func printState(cave *cave.Cave, entities Entities, dist map[Position]int) {
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("15_beverage_bandits/day15_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/15_beverage_bandits/day15_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

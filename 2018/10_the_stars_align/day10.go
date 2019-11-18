@@ -87,13 +87,13 @@ func createImage(l []*Star) *image.RGBA {
 
 func saveImage(name string, img *image.RGBA) {
 	// Save to out.png
-	f, _ := os.OpenFile(fmt.Sprintf("10_the_stars_align/%s.png", name), os.O_WRONLY|os.O_CREATE, 0600)
+	f, _ := os.OpenFile(fmt.Sprintf("2018/10_the_stars_align/%s.png", name), os.O_WRONLY|os.O_CREATE, 0600)
 	defer f.Close()
 	png.Encode(f, img)
 }
 
 func main() {
-	fileContent, err := ioutil.ReadFile("10_the_stars_align/day10_input.txt")
+	fileContent, err := ioutil.ReadFile("2018/10_the_stars_align/day10_input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
