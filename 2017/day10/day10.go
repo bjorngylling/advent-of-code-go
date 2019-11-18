@@ -18,7 +18,7 @@ func main() {
 }
 
 func readInput() string {
-	file, err := os.Open("./day10/day10_input")
+	file, err := os.Open("./2017/day10/day10_input")
 	if err != nil {
 		log.Fatal(err)
 	}

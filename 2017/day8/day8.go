@@ -100,7 +100,7 @@ func (cpu *cpu) eval(instr instr) int {
 
 func main() {
 	cpu := newCPU()
-	file, err := os.Open("./day8/day8_input")
+	file, err := os.Open("./2017/day8/day8_input")
 	if err != nil {
 		log.Fatal(err)
 	}
