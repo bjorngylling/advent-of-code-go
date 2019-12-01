@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/bjorngylling/advent-of-code-2018/17_reservoir_research/grid"
+	"github.com/bjorngylling/advent-of-code/2018/17_reservoir_research/grid"
 	"testing"
 )
 

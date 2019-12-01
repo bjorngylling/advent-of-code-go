@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/bjorngylling/advent-of-code-2018/18_settlers_of_the_north_pole/grid"
+	"github.com/bjorngylling/advent-of-code/2018/18_settlers_of_the_north_pole/grid"
 	"reflect"
 	"testing"
 )

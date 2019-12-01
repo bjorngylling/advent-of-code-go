@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/bjorngylling/advent-of-code-2018/15_beverage_bandits/entity"
+	"github.com/bjorngylling/advent-of-code/2018/15_beverage_bandits/entity"
 	"testing"
 )
 

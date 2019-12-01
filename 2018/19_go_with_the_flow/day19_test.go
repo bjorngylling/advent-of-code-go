@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/bjorngylling/advent-of-code-2018/19_go_with_the_flow/operations"
+	. "github.com/bjorngylling/advent-of-code/2018/19_go_with_the_flow/operations"
 	"testing"
 )
 
@@ -31,7 +31,7 @@ func TestParseProgram(t *testing.T) {
 func TestRunProgram(t *testing.T) {
 	ip, program := parseInput(input)
 	want := Registers{6, 5, 6, 0, 0, 9}
-	got := runProgram(ip, program)
+	got := runProgram(ip, program, Registers{})
 	if !got.Eq(want) {
 		t.Errorf("Registers == %d, want %d", got, want)
 	}

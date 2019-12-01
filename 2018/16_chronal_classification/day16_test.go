@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/bjorngylling/advent-of-code-2018/16_chronal_classification/operations"
+	. "github.com/bjorngylling/advent-of-code/2018/16_chronal_classification/operations"
 	"reflect"
 	"testing"
 )
