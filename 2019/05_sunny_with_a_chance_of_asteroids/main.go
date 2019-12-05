@@ -48,7 +48,7 @@ func solve(input string) (string, string) {
 	var p2 bytes.Buffer
 	run(p2memory, strings.NewReader("5"), &p2)
 
-	return p1.String(), p2.String()
+	return strings.TrimLeft(p1.String(), "0"), strings.TrimLeft(p2.String(), "0")
 }
 
 func run(reg memory, reader io.Reader, writer io.Writer) memory {
@@ -62,10 +62,10 @@ func run(reg memory, reader io.Reader, writer io.Writer) memory {
 			*param(reg, instrPtr+3, tarMode) = *param(reg, instrPtr+1, p1Mode) * *param(reg, instrPtr+2, p2Mode)
 			instrPtr += 4
 		case IN:
-			fmt.Fscanf(reader, "%d", param(reg, instrPtr+1, tarMode))
+			_, _ = fmt.Fscanf(reader, "%d", param(reg, instrPtr+1, tarMode))
 			instrPtr += 2
 		case OUT:
-			fmt.Fprintf(writer, "%d", *param(reg, instrPtr+1, p1Mode))
+			_, _ = fmt.Fprintf(writer, "%d", *param(reg, instrPtr+1, p1Mode))
 			instrPtr += 2
 		case JT:
 			if *param(reg, instrPtr+1, p1Mode) != 0 {
