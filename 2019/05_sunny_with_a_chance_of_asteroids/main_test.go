@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -22,7 +24,54 @@ func Test_run(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := run(tt.args.reg); !reflect.DeepEqual(got, tt.want) {
+			if got := run(tt.args.reg, nil, nil); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("run() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_run_with_io(t *testing.T) {
+	type args struct {
+		reg memory
+	}
+	tests := []struct {
+		name  string
+		args  args
+		input string
+		want  string
+	}{
+		{name: "simple_io", args: args{reg: memory{3, 0, 4, 0, 99}}, input: "5", want: "5"},
+
+		{name: "pos_mode_eq_8", args: args{reg: memory{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8}}, input: "5", want: "0"},
+		{name: "pos_mode_eq_8", args: args{reg: memory{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8}}, input: "8", want: "1"},
+		{name: "pos_mode_lt_8", args: args{reg: memory{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8}}, input: "5", want: "1"},
+		{name: "pos_mode_lt_8", args: args{reg: memory{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8}}, input: "8", want: "0"},
+		{name: "pos_mode_lt_8", args: args{reg: memory{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8}}, input: "42", want: "0"},
+
+		{name: "intermediate_mode_eq_8", args: args{reg: memory{3, 3, 1108, -1, 8, 3, 4, 3, 99}}, input: "42", want: "0"},
+		{name: "intermediate_mode_eq_8", args: args{reg: memory{3, 3, 1108, -1, 8, 3, 4, 3, 99}}, input: "8", want: "1"},
+		{name: "intermediate_mode_lt_8", args: args{reg: memory{3, 3, 1107, -1, 8, 3, 4, 3, 99}}, input: "3", want: "1"},
+		{name: "intermediate_mode_lt_8", args: args{reg: memory{3, 3, 1107, -1, 8, 3, 4, 3, 99}}, input: "8", want: "0"},
+		{name: "intermediate_mode_lt_8", args: args{reg: memory{3, 3, 1107, -1, 8, 3, 4, 3, 99}}, input: "69", want: "0"},
+
+		{name: "pos_mode_if_in_0", args: args{reg: memory{3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9}}, input: "0", want: "0"},
+		{name: "pos_mode_if_in_0", args: args{reg: memory{3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9}}, input: "10", want: "1"},
+		{name: "intermediate_mode_if_in_0", args: args{reg: memory{3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1}}, input: "0", want: "0"},
+		{name: "intermediate_mode_if_in_0", args: args{reg: memory{3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1}}, input: "10", want: "1"},
+
+		{name: "compare_to_8", args: args{reg: memory{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99}},
+			input: "2", want: "999"},
+		{name: "compare_to_8", args: args{reg: memory{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99}},
+			input: "8", want: "1000"},
+		{name: "compare_to_8", args: args{reg: memory{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99}},
+			input: "200", want: "1001"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var writer bytes.Buffer
+			run(tt.args.reg, strings.NewReader(tt.input), &writer)
+			if got := writer.String(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("run() = %v, want %v", got, tt.want)
 			}
 		})

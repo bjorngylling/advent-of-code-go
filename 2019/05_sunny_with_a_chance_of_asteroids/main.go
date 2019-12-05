@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"strconv"
 	"strings"
 	"time"
@@ -11,10 +13,15 @@ type instruction = int
 type paramMode = int
 
 const (
-	ADD = 1
-	MUL = 2
-	IN  = 3
-	OUT = 4
+	NIL = iota
+	ADD
+	MUL
+	IN
+	OUT
+	JT
+	JF
+	LT
+	EQ
 
 	EXIT = 99
 )
@@ -22,46 +29,81 @@ const (
 type memory []instruction
 
 func solve(input string) (string, string) {
-	var reg memory
+	var program memory
 	for _, instr := range strings.Split(input, ",") {
 		if i, e := strconv.Atoi(instr); e == nil {
-			reg = append(reg, i)
+			program = append(program, i)
 		}
 	}
-	if reg == nil {
+	if program == nil {
 		panic(fmt.Errorf("reg is empty, unable parse to any instructions from input"))
 	}
 
-	return "", ""
+	p1memory := make(memory, len(program))
+	copy(p1memory, program)
+	var p1 bytes.Buffer
+	run(p1memory, strings.NewReader("1"), &p1)
+	p2memory := make(memory, len(program))
+	copy(p2memory, program)
+	var p2 bytes.Buffer
+	run(p2memory, strings.NewReader("5"), &p2)
+
+	return p1.String(), p2.String()
 }
 
-func run(reg memory) memory {
-	for instrPntr := 0; reg[instrPntr] != EXIT; {
-		op, p1Mode, p2Mode, tarMode := parseOp(reg[instrPntr])
+func run(reg memory, reader io.Reader, writer io.Writer) memory {
+	for instrPtr := 0; reg[instrPtr] != EXIT; {
+		op, p1Mode, p2Mode, tarMode := parseOp(reg[instrPtr])
 		switch op {
 		case ADD:
-			*param(reg, instrPntr+3, tarMode) = *param(reg, instrPntr+1, p1Mode) + *param(reg, instrPntr+2, p2Mode)
-			instrPntr += 4
+			*param(reg, instrPtr+3, tarMode) = *param(reg, instrPtr+1, p1Mode) + *param(reg, instrPtr+2, p2Mode)
+			instrPtr += 4
 		case MUL:
-			*param(reg, instrPntr+3, tarMode) = *param(reg, instrPntr+1, p1Mode) * *param(reg, instrPntr+2, p2Mode)
-			instrPntr += 4
+			*param(reg, instrPtr+3, tarMode) = *param(reg, instrPtr+1, p1Mode) * *param(reg, instrPtr+2, p2Mode)
+			instrPtr += 4
 		case IN:
-			fmt.Scanf("%d", *param(reg, instrPntr+1, tarMode))
-			instrPntr += 2
+			fmt.Fscanf(reader, "%d", param(reg, instrPtr+1, tarMode))
+			instrPtr += 2
 		case OUT:
-			fmt.Printf("ptr=%d, output=%d\n", instrPntr, *param(reg, instrPntr+1, tarMode))
-			instrPntr += 2
+			fmt.Fprintf(writer, "%d", *param(reg, instrPtr+1, p1Mode))
+			instrPtr += 2
+		case JT:
+			if *param(reg, instrPtr+1, p1Mode) != 0 {
+				instrPtr = *param(reg, instrPtr+2, p2Mode)
+			} else {
+				instrPtr += 3
+			}
+		case JF:
+			if *param(reg, instrPtr+1, p1Mode) == 0 {
+				instrPtr = *param(reg, instrPtr+2, p2Mode)
+			} else {
+				instrPtr += 3
+			}
+		case LT:
+			if *param(reg, instrPtr+1, p1Mode) < *param(reg, instrPtr+2, p2Mode) {
+				*param(reg, instrPtr+3, tarMode) = 1
+			} else {
+				*param(reg, instrPtr+3, tarMode) = 0
+			}
+			instrPtr += 4
+		case EQ:
+			if *param(reg, instrPtr+1, p1Mode) == *param(reg, instrPtr+2, p2Mode) {
+				*param(reg, instrPtr+3, tarMode) = 1
+			} else {
+				*param(reg, instrPtr+3, tarMode) = 0
+			}
+			instrPtr += 4
 		}
 	}
 	return reg
 }
 
-func param(reg memory, pntr int, mode paramMode) *int {
+func param(reg memory, ptr int, mode paramMode) *int {
 	switch mode {
 	case 0:
-		return &reg[reg[pntr]]
+		return &reg[reg[ptr]]
 	case 1:
-		return &reg[pntr]
+		return &reg[ptr]
 	}
 	return nil
 }
@@ -79,8 +121,6 @@ func (r memory) String() string {
 }
 
 func main() {
-	run(memory{3, 0, 4, 0, 99})
-
 	start := time.Now()
 	part1, part2 := solve(puzzle)
 	elapsed := time.Since(start)
