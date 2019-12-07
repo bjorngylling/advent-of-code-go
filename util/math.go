@@ -5,53 +5,51 @@ import (
 	"strconv"
 )
 
-// Min does what it says on the tin, but with ints and not float64s
-func Min(a, b int) int {
+func min(a, b int) int {
 	if a > b {
 		return b
 	}
 	return a
 }
 
-// MinOf applies Min to multiple ints, returning the smallest of all of them
-func MinOf(ints ...int) int {
+// Return the smallest of all supplied ints
+func Min(ints ...int) int {
 	switch len(ints) {
 	case 0:
 		panic("no ints specified")
 	case 1:
 		return ints[0]
 	case 2:
-		return Min(ints[0], ints[1])
+		return min(ints[0], ints[1])
 	default:
 		curMin := ints[0]
 		for _, i := range ints[1:] {
-			curMin = Min(curMin, i)
+			curMin = min(curMin, i)
 		}
 		return curMin
 	}
 }
 
-// Max does what it says on the tin, but with ints and not float64s
-func Max(a, b int) int {
+func max(a, b int) int {
 	if a > b {
 		return a
 	}
 	return b
 }
 
-// MaxOf applies Max to multiple ints, returning the largest of all of them
-func MaxOf(ints ...int) int {
+// Return the largest of all supplied ints
+func Max(ints ...int) int {
 	switch len(ints) {
 	case 0:
 		panic("no ints specified")
 	case 1:
 		return ints[0]
 	case 2:
-		return Max(ints[0], ints[1])
+		return max(ints[0], ints[1])
 	default:
 		curMax := ints[0]
 		for _, i := range ints[1:] {
-			curMax = Max(curMax, i)
+			curMax = max(curMax, i)
 		}
 		return curMax
 	}
