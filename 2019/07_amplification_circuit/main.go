@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -75,7 +76,67 @@ func solve(input string) (string, string) {
 		}
 	}
 
-	return strconv.Itoa(part1), ""
+	phaseSetting = []int{5, 6, 7, 8, 9}
+	part2 := 0
+	for p := make([]int, len(phaseSetting)); p[0] < len(p); nextPerm(p) {
+		cfg := getPerm(phaseSetting, p)
+
+		wg := &sync.WaitGroup{}
+		wg.Add(5)
+
+		amp1In := make(chan int, 10)
+		amp1In <- cfg[0]
+		amp1In <- 0
+		amp1Out := make(chan int, 10)
+		amp1Out <- cfg[1] // Prepare phase settings for amp 2
+		mem1 := make(memory, len(program))
+		copy(mem1, program)
+		go func() {
+			run(mem1, amp1In, amp1Out)
+			wg.Done()
+		}()
+
+		amp2Out := make(chan int, 10)
+		amp2Out <- cfg[2] // Prepare phase settings for amp 3
+		mem2 := make(memory, len(program))
+		copy(mem2, program)
+		go func() {
+			run(mem2, amp1Out, amp2Out)
+			wg.Done()
+		}()
+
+		amp3Out := make(chan int, 10)
+		amp3Out <- cfg[3] // Prepare phase settings for amp 4
+		mem3 := make(memory, len(program))
+		copy(mem3, program)
+		go func() {
+			run(mem3, amp2Out, amp3Out)
+			wg.Done()
+		}()
+
+		amp4Out := make(chan int, 10)
+		amp4Out <- cfg[4] // Prepare phase settings for amp 5
+		mem4 := make(memory, len(program))
+		copy(mem4, program)
+		go func() {
+			run(mem4, amp3Out, amp4Out)
+			wg.Done()
+		}()
+
+		mem5 := make(memory, len(program))
+		copy(mem5, program)
+		go func() {
+			run(mem5, amp4Out, amp1In)
+			wg.Done()
+		}()
+
+		wg.Wait() // wait for all programs to terminate
+		if thrust := <-amp1In; thrust > part2 {
+			part2 = thrust
+		}
+	}
+
+	return strconv.Itoa(part1), strconv.Itoa(part2)
 }
 
 func run(reg memory, in chan int, out chan int) memory {
