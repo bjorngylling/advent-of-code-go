@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/bjorngylling/advent-of-code/util"
 	"image"
 	"math"
 	"strconv"
@@ -52,15 +53,8 @@ func solve(input string) (string, string) {
 	return strconv.Itoa(part1), strconv.Itoa(part2)
 }
 
-func abs(n int) int {
-	if n < 0 {
-		return -n
-	}
-	return n
-}
-
 func manhattanDistance(a, b image.Point) int {
-	return abs(b.X-a.X) + abs(b.Y-a.Y)
+	return util.Abs(b.X-a.X) + util.Abs(b.Y-a.Y)
 }
 
 func union(a, b pointSet) pointSet {
