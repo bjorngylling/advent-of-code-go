@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/bjorngylling/advent-of-code/util"
 	"os"
 	"strconv"
 	"strings"
@@ -49,9 +50,7 @@ func getPerm(orig, p []int) []int {
 func solve(input string) (string, string) {
 	var program memory
 	for _, instr := range strings.Split(input, ",") {
-		if i, e := strconv.Atoi(instr); e == nil {
-			program = append(program, i)
-		}
+		program = append(program, util.GetInt(instr))
 	}
 	if program == nil {
 		panic(fmt.Errorf("reg is empty, unable parse to any instructions from input"))
@@ -71,9 +70,7 @@ func solve(input string) (string, string) {
 			run(mem, in, out)
 			thrust = <-out
 		}
-		if thrust > part1 {
-			part1 = thrust
-		}
+		part1 = util.Max(part1, thrust)
 	}
 
 	phaseSetting = []int{5, 6, 7, 8, 9}
@@ -131,9 +128,7 @@ func solve(input string) (string, string) {
 		}()
 
 		wg.Wait() // wait for all programs to terminate
-		if thrust := <-amp1In; thrust > part2 {
-			part2 = thrust
-		}
+		part2 = util.Max(part2, <-amp1In)
 	}
 
 	return strconv.Itoa(part1), strconv.Itoa(part2)
