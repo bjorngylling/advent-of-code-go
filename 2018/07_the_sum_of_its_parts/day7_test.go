@@ -28,7 +28,7 @@ var data = []string{
 func TestParseInput(t *testing.T) {
 	result := parseInput(data)["C"] // We know C is the only root in the graph described in data
 	if result.Name != "C" {
-		t.Errorf("Expected root node to be C but was %s", result)
+		t.Errorf("Expected root node to be C but was %s", result.Name)
 	}
 	if len(result.Edges) != 2 {
 		t.Errorf("Expected root node to have 2 edges but was %d", len(result.Edges))

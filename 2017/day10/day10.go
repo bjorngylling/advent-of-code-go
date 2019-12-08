@@ -11,14 +11,14 @@ import (
 )
 
 func main() {
-	input := readInput()
+	input := readInput("./2017/day10/day10_input")
 
 	fmt.Println("-- Day 10 --")
 	fmt.Printf("part_1=%d", part1(input))
 }
 
-func readInput() string {
-	file, err := os.Open("./2017/day10/day10_input")
+func readInput(path string) string {
+	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}

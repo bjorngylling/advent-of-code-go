@@ -3,8 +3,8 @@ package entity
 import "testing"
 
 func TestEntity_Attack(t *testing.T) {
-	a := New(GOBLIN, Pos(0, 0))
-	b := New(ELF, Pos(0, 1))
+	a := New(GOBLIN, Pos(0, 0), 3)
+	b := New(ELF, Pos(0, 1), 3)
 	e := a.Attack(b)
 	if e != nil {
 		t.Error(e)

@@ -62,7 +62,7 @@ func TestMostCommonSleepingMinute(t *testing.T) {
 	}
 	expected := 25
 	result := mostCommonSleepingMinute(events)
-	if result != expected {
+	if result.min != expected {
 		t.Errorf("Expected %+v but was %+v", expected, result)
 	}
 }

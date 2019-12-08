@@ -53,7 +53,7 @@ func TestReversePartOfList(t *testing.T) {
 }
 
 func TestPart1(t *testing.T) {
-	if ans := part1(readInput()); ans != 11413 {
+	if ans := part1(readInput("day10_input")); ans != 11413 {
 		t.Errorf("Expected answer for part1 to be 11413 but was %d", ans)
 	}
 }
