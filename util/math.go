@@ -73,6 +73,6 @@ func GetInt(in string) int {
 }
 
 // RoundDown returns the given float rounded towards 0
-func RoundDown(in float64) int {
+func Trunc(in float64) int {
 	return int(math.Trunc(in))
 }
