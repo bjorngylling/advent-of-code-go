@@ -2,32 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/bjorngylling/advent-of-code/2019/intcode"
 	"github.com/bjorngylling/advent-of-code/util"
-	"os"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
-
-type instruction = int
-type paramMode = int
-
-const (
-	NIL = iota
-	ADD
-	MUL
-	IN
-	OUT
-	JT
-	JF
-	LT
-	EQ
-
-	EXIT = 99
-)
-
-type memory []instruction
 
 func nextPerm(p []int) {
 	for i := len(p) - 1; i >= 0; i-- {
@@ -48,14 +28,6 @@ func getPerm(orig, p []int) []int {
 }
 
 func solve(input string) (string, string) {
-	var program memory
-	for _, instr := range strings.Split(input, ",") {
-		program = append(program, util.GetInt(instr))
-	}
-	if program == nil {
-		panic(fmt.Errorf("reg is empty, unable parse to any instructions from input"))
-	}
-
 	phaseSetting := []int{0, 1, 2, 3, 4}
 	part1 := 0
 	for p := make([]int, len(phaseSetting)); p[0] < len(p); nextPerm(p) {
@@ -65,9 +37,11 @@ func solve(input string) (string, string) {
 			in := make(chan int, 10)
 			in <- i
 			in <- thrust
-			mem := make(memory, len(program))
-			copy(mem, program)
-			run(mem, in, out)
+			computer, err := intcode.Init(input, in, out)
+			if err != nil {
+				panic(err)
+			}
+			computer.Run()
 			thrust = <-out
 		}
 		part1 = util.Max(part1, thrust)
@@ -86,44 +60,54 @@ func solve(input string) (string, string) {
 		amp1In <- 0
 		amp1Out := make(chan int, 10)
 		amp1Out <- cfg[1] // Prepare phase settings for amp 2
-		mem1 := make(memory, len(program))
-		copy(mem1, program)
+		amp1, err := intcode.Init(input, amp1In, amp1Out)
+		if err != nil {
+			panic(err)
+		}
 		go func() {
-			run(mem1, amp1In, amp1Out)
+			amp1.Run()
 			wg.Done()
 		}()
 
 		amp2Out := make(chan int, 10)
 		amp2Out <- cfg[2] // Prepare phase settings for amp 3
-		mem2 := make(memory, len(program))
-		copy(mem2, program)
+		amp2, err := intcode.Init(input, amp1Out, amp2Out)
+		if err != nil {
+			panic(err)
+		}
 		go func() {
-			run(mem2, amp1Out, amp2Out)
+			amp2.Run()
 			wg.Done()
 		}()
 
 		amp3Out := make(chan int, 10)
 		amp3Out <- cfg[3] // Prepare phase settings for amp 4
-		mem3 := make(memory, len(program))
-		copy(mem3, program)
+		amp3, err := intcode.Init(input, amp2Out, amp3Out)
+		if err != nil {
+			panic(err)
+		}
 		go func() {
-			run(mem3, amp2Out, amp3Out)
+			amp3.Run()
 			wg.Done()
 		}()
 
 		amp4Out := make(chan int, 10)
 		amp4Out <- cfg[4] // Prepare phase settings for amp 5
-		mem4 := make(memory, len(program))
-		copy(mem4, program)
+		amp4, err := intcode.Init(input, amp3Out, amp4Out)
+		if err != nil {
+			panic(err)
+		}
 		go func() {
-			run(mem4, amp3Out, amp4Out)
+			amp4.Run()
 			wg.Done()
 		}()
 
-		mem5 := make(memory, len(program))
-		copy(mem5, program)
+		amp5, err := intcode.Init(input, amp4Out, amp1In)
+		if err != nil {
+			panic(err)
+		}
 		go func() {
-			run(mem5, amp4Out, amp1In)
+			amp5.Run()
 			wg.Done()
 		}()
 
@@ -132,78 +116,6 @@ func solve(input string) (string, string) {
 	}
 
 	return strconv.Itoa(part1), strconv.Itoa(part2)
-}
-
-func run(reg memory, in chan int, out chan int) memory {
-	for instrPtr := 0; reg[instrPtr] != EXIT; {
-		op, p1Mode, p2Mode, tarMode := parseOp(reg[instrPtr])
-		switch op {
-		case ADD:
-			*param(reg, instrPtr+3, tarMode) = *param(reg, instrPtr+1, p1Mode) + *param(reg, instrPtr+2, p2Mode)
-			instrPtr += 4
-		case MUL:
-			*param(reg, instrPtr+3, tarMode) = *param(reg, instrPtr+1, p1Mode) * *param(reg, instrPtr+2, p2Mode)
-			instrPtr += 4
-		case IN:
-			*param(reg, instrPtr+1, tarMode) = <-in
-			instrPtr += 2
-		case OUT:
-			out <- *param(reg, instrPtr+1, p1Mode)
-			instrPtr += 2
-		case JT:
-			if *param(reg, instrPtr+1, p1Mode) != 0 {
-				instrPtr = *param(reg, instrPtr+2, p2Mode)
-			} else {
-				instrPtr += 3
-			}
-		case JF:
-			if *param(reg, instrPtr+1, p1Mode) == 0 {
-				instrPtr = *param(reg, instrPtr+2, p2Mode)
-			} else {
-				instrPtr += 3
-			}
-		case LT:
-			if *param(reg, instrPtr+1, p1Mode) < *param(reg, instrPtr+2, p2Mode) {
-				*param(reg, instrPtr+3, tarMode) = 1
-			} else {
-				*param(reg, instrPtr+3, tarMode) = 0
-			}
-			instrPtr += 4
-		case EQ:
-			if *param(reg, instrPtr+1, p1Mode) == *param(reg, instrPtr+2, p2Mode) {
-				*param(reg, instrPtr+3, tarMode) = 1
-			} else {
-				*param(reg, instrPtr+3, tarMode) = 0
-			}
-			instrPtr += 4
-		default:
-			fmt.Printf("unknown operation: ptr=%d, op=%d, p1Mode=%d, p2Mode=%d, tarMode=%d\n", instrPtr, op, p1Mode, p2Mode, tarMode)
-			os.Exit(1)
-		}
-	}
-	return reg
-}
-
-func param(reg memory, ptr int, mode paramMode) *int {
-	switch mode {
-	case 0:
-		return &reg[reg[ptr]]
-	case 1:
-		return &reg[ptr]
-	}
-	return nil
-}
-
-func parseOp(instr int) (instruction, paramMode, paramMode, paramMode) {
-	return instr % 100, instr / 100 % 10, instr / 1000 % 10, instr / 10000 % 10
-}
-
-func (r memory) String() string {
-	var strSlice []string
-	for _, i := range r {
-		strSlice = append(strSlice, strconv.Itoa(i))
-	}
-	return strings.Join(strSlice, ",")
 }
 
 func main() {
