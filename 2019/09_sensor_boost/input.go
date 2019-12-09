@@ -6,9 +6,9 @@ var testPuzzles = []struct {
 	Solution2 string
 }{
 	{
-		Puzzle:    "",
-		Solution1: "",
-		Solution2: "",
+		Puzzle:    puzzle,
+		Solution1: "2204990589",
+		Solution2: "50008",
 	},
 }
 
