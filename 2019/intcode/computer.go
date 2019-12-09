@@ -19,6 +19,7 @@ const (
 	jf
 	lt
 	eq
+	arb
 
 	exit = 99
 )
@@ -30,6 +31,7 @@ type paramMode = int
 const (
 	modePosition paramMode = iota
 	modeImmediate
+	modeRelativeBase
 )
 
 type Computer struct {
@@ -49,62 +51,76 @@ func Init(program string, in chan int, out chan int) (Computer, error) {
 	return computer, nil
 }
 
-func param(reg Memory, ptr int, mode paramMode) *int {
-	switch mode {
-	case modePosition:
-		return &reg[reg[ptr]]
-	case modeImmediate:
-		return &reg[ptr]
-	}
-	return nil
-}
-
 func parseInstr(instr int) (operation, paramMode, paramMode, paramMode) {
 	return instr % 100, instr / 100 % 10, instr / 1000 % 10, instr / 10000 % 10
 }
 
-func (c Computer) Run() {
+func (c *Computer) expandIfReq(ptr int) {
+	if len(c.Mem) < ptr {
+		c.Mem = append(c.Mem, make(Memory, ptr-len(c.Mem)+50)...)
+	}
+}
+
+func (c *Computer) Run() {
+	relBase := 0
+	param := func(ptr int, mode paramMode) *int {
+		switch mode {
+		case modePosition:
+			c.expandIfReq(c.Mem[ptr])
+			return &c.Mem[c.Mem[ptr]]
+		case modeImmediate:
+			c.expandIfReq(ptr)
+			return &c.Mem[ptr]
+		case modeRelativeBase:
+			c.expandIfReq(relBase + c.Mem[ptr])
+			return &c.Mem[relBase+c.Mem[ptr]]
+		}
+		return nil
+	}
 	for instrPtr := 0; c.Mem[instrPtr] != exit; {
 		op, p1Mode, p2Mode, tarMode := parseInstr(c.Mem[instrPtr])
 		switch op {
 		case add:
-			*param(c.Mem, instrPtr+3, tarMode) = *param(c.Mem, instrPtr+1, p1Mode) + *param(c.Mem, instrPtr+2, p2Mode)
+			*param(instrPtr+3, tarMode) = *param(instrPtr+1, p1Mode) + *param(instrPtr+2, p2Mode)
 			instrPtr += 4
 		case mul:
-			*param(c.Mem, instrPtr+3, tarMode) = *param(c.Mem, instrPtr+1, p1Mode) * *param(c.Mem, instrPtr+2, p2Mode)
+			*param(instrPtr+3, tarMode) = *param(instrPtr+1, p1Mode) * *param(instrPtr+2, p2Mode)
 			instrPtr += 4
 		case in:
-			*param(c.Mem, instrPtr+1, tarMode) = <-c.In
+			*param(instrPtr+1, p1Mode) = <-c.In
 			instrPtr += 2
 		case out:
-			c.Out <- *param(c.Mem, instrPtr+1, p1Mode)
+			c.Out <- *param(instrPtr+1, p1Mode)
 			instrPtr += 2
 		case jt:
-			if *param(c.Mem, instrPtr+1, p1Mode) != 0 {
-				instrPtr = *param(c.Mem, instrPtr+2, p2Mode)
+			if *param(instrPtr+1, p1Mode) != 0 {
+				instrPtr = *param(instrPtr+2, p2Mode)
 			} else {
 				instrPtr += 3
 			}
 		case jf:
-			if *param(c.Mem, instrPtr+1, p1Mode) == 0 {
-				instrPtr = *param(c.Mem, instrPtr+2, p2Mode)
+			if *param(instrPtr+1, p1Mode) == 0 {
+				instrPtr = *param(instrPtr+2, p2Mode)
 			} else {
 				instrPtr += 3
 			}
 		case lt:
-			if *param(c.Mem, instrPtr+1, p1Mode) < *param(c.Mem, instrPtr+2, p2Mode) {
-				*param(c.Mem, instrPtr+3, tarMode) = 1
+			if *param(instrPtr+1, p1Mode) < *param(instrPtr+2, p2Mode) {
+				*param(instrPtr+3, tarMode) = 1
 			} else {
-				*param(c.Mem, instrPtr+3, tarMode) = 0
+				*param(instrPtr+3, tarMode) = 0
 			}
 			instrPtr += 4
 		case eq:
-			if *param(c.Mem, instrPtr+1, p1Mode) == *param(c.Mem, instrPtr+2, p2Mode) {
-				*param(c.Mem, instrPtr+3, tarMode) = 1
+			if *param(instrPtr+1, p1Mode) == *param(instrPtr+2, p2Mode) {
+				*param(instrPtr+3, tarMode) = 1
 			} else {
-				*param(c.Mem, instrPtr+3, tarMode) = 0
+				*param(instrPtr+3, tarMode) = 0
 			}
 			instrPtr += 4
+		case arb:
+			relBase += *param(instrPtr+1, p1Mode)
+			instrPtr += 2
 		default:
 			fmt.Printf("unknown operation: ptr=%d, op=%d, p1Mode=%d, p2Mode=%d, tarMode=%d\n", instrPtr, op, p1Mode, p2Mode, tarMode)
 			os.Exit(1)

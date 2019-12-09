@@ -39,66 +39,73 @@ func Test_run_with_io(t *testing.T) {
 		name  string
 		args  args
 		input []int
-		want  int
+		want  []int
 	}{
-		{name: "simple_io", args: args{reg: Memory{3, 0, 4, 0, 99}}, input: []int{5}, want: 5},
+		{name: "simple_io", args: args{reg: Memory{3, 0, 4, 0, 99}}, input: []int{5}, want: []int{5}},
 
-		{name: "pos_mode_eq_8", args: args{reg: Memory{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{5}, want: 0},
-		{name: "pos_mode_eq_8", args: args{reg: Memory{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{8}, want: 1},
-		{name: "pos_mode_lt_8", args: args{reg: Memory{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{5}, want: 1},
-		{name: "pos_mode_lt_8", args: args{reg: Memory{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{8}, want: 0},
-		{name: "pos_mode_lt_8", args: args{reg: Memory{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{42}, want: 0},
+		{name: "pos_mode_eq_8", args: args{reg: Memory{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{5}, want: []int{0}},
+		{name: "pos_mode_eq_8", args: args{reg: Memory{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{8}, want: []int{1}},
+		{name: "pos_mode_lt_8", args: args{reg: Memory{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{5}, want: []int{1}},
+		{name: "pos_mode_lt_8", args: args{reg: Memory{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{8}, want: []int{0}},
+		{name: "pos_mode_lt_8", args: args{reg: Memory{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8}}, input: []int{42}, want: []int{0}},
 
-		{name: "intermediate_mode_eq_8", args: args{reg: Memory{3, 3, 1108, -1, 8, 3, 4, 3, 99}}, input: []int{42}, want: 0},
-		{name: "intermediate_mode_eq_8", args: args{reg: Memory{3, 3, 1108, -1, 8, 3, 4, 3, 99}}, input: []int{8}, want: 1},
-		{name: "intermediate_mode_lt_8", args: args{reg: Memory{3, 3, 1107, -1, 8, 3, 4, 3, 99}}, input: []int{3}, want: 1},
-		{name: "intermediate_mode_lt_8", args: args{reg: Memory{3, 3, 1107, -1, 8, 3, 4, 3, 99}}, input: []int{8}, want: 0},
-		{name: "intermediate_mode_lt_8", args: args{reg: Memory{3, 3, 1107, -1, 8, 3, 4, 3, 99}}, input: []int{69}, want: 0},
+		{name: "intermediate_mode_eq_8", args: args{reg: Memory{3, 3, 1108, -1, 8, 3, 4, 3, 99}}, input: []int{42}, want: []int{0}},
+		{name: "intermediate_mode_eq_8", args: args{reg: Memory{3, 3, 1108, -1, 8, 3, 4, 3, 99}}, input: []int{8}, want: []int{1}},
+		{name: "intermediate_mode_lt_8", args: args{reg: Memory{3, 3, 1107, -1, 8, 3, 4, 3, 99}}, input: []int{3}, want: []int{1}},
+		{name: "intermediate_mode_lt_8", args: args{reg: Memory{3, 3, 1107, -1, 8, 3, 4, 3, 99}}, input: []int{8}, want: []int{0}},
+		{name: "intermediate_mode_lt_8", args: args{reg: Memory{3, 3, 1107, -1, 8, 3, 4, 3, 99}}, input: []int{69}, want: []int{0}},
 
-		{name: "pos_mode_if_in_0", args: args{reg: Memory{3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9}}, input: []int{0}, want: 0},
-		{name: "pos_mode_if_in_0", args: args{reg: Memory{3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9}}, input: []int{10}, want: 1},
-		{name: "intermediate_mode_if_in_0", args: args{reg: Memory{3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1}}, input: []int{0}, want: 0},
-		{name: "intermediate_mode_if_in_0", args: args{reg: Memory{3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1}}, input: []int{10}, want: 1},
+		{name: "pos_mode_if_in_0", args: args{reg: Memory{3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9}}, input: []int{0}, want: []int{0}},
+		{name: "pos_mode_if_in_0", args: args{reg: Memory{3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9}}, input: []int{10}, want: []int{1}},
+		{name: "intermediate_mode_if_in_0", args: args{reg: Memory{3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1}}, input: []int{0}, want: []int{0}},
+		{name: "intermediate_mode_if_in_0", args: args{reg: Memory{3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1}}, input: []int{10}, want: []int{1}},
 
 		{name: "compare_to_8", args: args{reg: Memory{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99}},
-			input: []int{2}, want: 999},
+			input: []int{2}, want: []int{999}},
 		{name: "compare_to_8", args: args{reg: Memory{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99}},
-			input: []int{8}, want: 1000},
+			input: []int{8}, want: []int{1000}},
 		{name: "compare_to_8", args: args{reg: Memory{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99}},
-			input: []int{200}, want: 1001},
+			input: []int{200}, want: []int{1001}},
 
 		{name: "max_thruster_sig_43210", args: args{reg: Memory{3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0}},
-			input: []int{4, 0}, want: 4},
+			input: []int{4, 0}, want: []int{4}},
 		{name: "max_thruster_sig_43210", args: args{reg: Memory{3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0}},
-			input: []int{3, 4}, want: 43},
+			input: []int{3, 4}, want: []int{43}},
 		{name: "max_thruster_sig_43210", args: args{reg: Memory{3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0}},
-			input: []int{2, 43}, want: 432},
+			input: []int{2, 43}, want: []int{432}},
 		{name: "max_thruster_sig_43210", args: args{reg: Memory{3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0}},
-			input: []int{1, 432}, want: 4321},
+			input: []int{1, 432}, want: []int{4321}},
 		{name: "max_thruster_sig_43210", args: args{reg: Memory{3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0}},
-			input: []int{0, 4321}, want: 43210},
+			input: []int{0, 4321}, want: []int{43210}},
 
 		{name: "max_thruster_sig_54321", args: args{reg: Memory{3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0}},
-			input: []int{0, 0}, want: 5},
+			input: []int{0, 0}, want: []int{5}},
 		{name: "max_thruster_sig_54321", args: args{reg: Memory{3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0}},
-			input: []int{1, 5}, want: 54},
+			input: []int{1, 5}, want: []int{54}},
 		{name: "max_thruster_sig_54321", args: args{reg: Memory{3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0}},
-			input: []int{2, 54}, want: 543},
+			input: []int{2, 54}, want: []int{543}},
 		{name: "max_thruster_sig_54321", args: args{reg: Memory{3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0}},
-			input: []int{3, 543}, want: 5432},
+			input: []int{3, 543}, want: []int{5432}},
 		{name: "max_thruster_sig_54321", args: args{reg: Memory{3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0}},
-			input: []int{4, 5432}, want: 54321},
+			input: []int{4, 5432}, want: []int{54321}},
 
 		{name: "max_thruster_sig_65210", args: args{reg: Memory{3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31, 1, 32, 31, 31, 4, 31, 99, 0, 0, 0}},
-			input: []int{1, 0}, want: 6},
+			input: []int{1, 0}, want: []int{6}},
 		{name: "max_thruster_sig_65210", args: args{reg: Memory{3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31, 1, 32, 31, 31, 4, 31, 99, 0, 0, 0}},
-			input: []int{0, 6}, want: 65},
+			input: []int{0, 6}, want: []int{65}},
 		{name: "max_thruster_sig_65210", args: args{reg: Memory{3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31, 1, 32, 31, 31, 4, 31, 99, 0, 0, 0}},
-			input: []int{4, 65}, want: 652},
+			input: []int{4, 65}, want: []int{652}},
 		{name: "max_thruster_sig_65210", args: args{reg: Memory{3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31, 1, 32, 31, 31, 4, 31, 99, 0, 0, 0}},
-			input: []int{3, 652}, want: 6521},
+			input: []int{3, 652}, want: []int{6521}},
 		{name: "max_thruster_sig_65210", args: args{reg: Memory{3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31, 1, 32, 31, 31, 4, 31, 99, 0, 0, 0}},
-			input: []int{2, 6521}, want: 65210},
+			input: []int{2, 6521}, want: []int{65210}},
+
+		{name: "relative_base", args: args{reg: Memory{109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99}},
+			input: []int{}, want: []int{109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99}},
+		{name: "large_num", args: args{reg: Memory{1102, 34915192, 34915192, 7, 4, 7, 99, 0}},
+			input: []int{}, want: []int{34915192 * 34915192}},
+		{name: "large_num", args: args{reg: Memory{104, 1125899906842624, 99}},
+			input: []int{}, want: []int{1125899906842624}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -106,10 +113,15 @@ func Test_run_with_io(t *testing.T) {
 			for _, i := range tt.input {
 				in <- i
 			}
-			out := make(chan int, 10)
+			out := make(chan int, 100)
 			c := Computer{Mem: tt.args.reg, In: in, Out: out}
 			c.Run()
-			if got := <-out; !reflect.DeepEqual(got, tt.want) {
+			close(out)
+			var got []int
+			for i := range out {
+				got = append(got, i)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("run() = %v, want %v", got, tt.want)
 			}
 		})
