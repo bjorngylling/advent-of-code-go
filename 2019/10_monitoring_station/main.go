@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bjorngylling/advent-of-code/util"
 	"image"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -64,30 +65,11 @@ func pairs(lst []image.Point) [][2]image.Point {
 
 // True if pt(c) is exactly on the line between pt(a) and pt(b)
 func intersects(a, b, c image.Point) bool {
-	dxc := c.X - a.X
-	dyc := c.Y - a.Y
+	return angleRad(a, b) == angleRad(a, c) && util.ManhattanDistance(a, c) < util.ManhattanDistance(a, b)
+}
 
-	dxl := b.X - a.X
-	dyl := b.Y - a.Y
-
-	cross := dxc*dyl - dyc*dxl
-	if cross != 0 {
-		return false
-	}
-
-	if util.Abs(dxl) >= util.Abs(dyl) {
-		if dxl > 0 {
-			return a.X <= c.X && c.X <= b.X
-		} else {
-			return b.X <= c.X && c.X <= a.X
-		}
-	} else {
-		if dyl > 0 {
-			return a.Y <= c.Y && c.Y <= b.Y
-		} else {
-			return b.Y <= c.Y && c.Y <= a.Y
-		}
-	}
+func angleRad(a, b image.Point) float64 {
+	return math.Atan2(float64(b.Y-a.Y), float64(b.X-a.X))
 }
 
 func main() {
