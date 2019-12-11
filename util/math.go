@@ -1,6 +1,7 @@
 package util
 
 import (
+	"image"
 	"math"
 	"strconv"
 )
@@ -75,4 +76,8 @@ func GetInt(in string) int {
 // RoundDown returns the given float rounded towards 0
 func Trunc(in float64) int {
 	return int(math.Trunc(in))
+}
+
+func ManhattanDistance(a, b image.Point) int {
+	return Abs(b.X-a.X) + Abs(b.Y-a.Y)
 }

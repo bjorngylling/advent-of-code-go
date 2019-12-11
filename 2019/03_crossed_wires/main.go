@@ -42,7 +42,7 @@ func solve(input string) (string, string) {
 	part1 := math.MaxInt32
 	part2 := math.MaxInt32
 	for pt, steps := range union(cables[0], cables[1]) {
-		if d := manhattanDistance(image.Point{}, pt); d < part1 {
+		if d := util.ManhattanDistance(image.Point{}, pt); d < part1 {
 			part1 = d
 		}
 		if steps < part2 {
@@ -51,10 +51,6 @@ func solve(input string) (string, string) {
 	}
 
 	return strconv.Itoa(part1), strconv.Itoa(part2)
-}
-
-func manhattanDistance(a, b image.Point) int {
-	return util.Abs(b.X-a.X) + util.Abs(b.Y-a.Y)
 }
 
 func union(a, b pointSet) pointSet {
