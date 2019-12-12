@@ -67,7 +67,7 @@ func (c *Computer) readMem(ptr int, mode paramMode) int {
 
 func (c *Computer) writeMem(ptr int, mode paramMode, value int) {
 	addr := c.getAddr(mode, ptr)
-	if len(c.Mem) < addr {
+	if len(c.Mem) <= addr {
 		c.Mem = append(c.Mem, make(Memory, addr-len(c.Mem)+50)...)
 	}
 	c.Mem[addr] = value
