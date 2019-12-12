@@ -92,7 +92,7 @@ var testPuzzles = []struct {
 #.#.#.#####.####.###
 ###.##.####.##.#..##`,
 		Solution1: "210",
-		Solution2: "",
+		Solution2: "802",
 	},
 	{
 		Puzzle:    puzzle,

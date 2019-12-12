@@ -5,6 +5,7 @@ import (
 	"github.com/bjorngylling/advent-of-code/util"
 	"image"
 	"math"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -49,8 +50,61 @@ func solve(input string) (string, string) {
 			best = pt
 		}
 	}
+	part1 := len(space[best])
 
-	return strconv.Itoa(len(space[best])), ""
+	if len(space) < 200 {
+		return strconv.Itoa(part1), "" // part two cant be done if the asteroid field is smaller than 200
+	}
+
+	// Calculate the slope of all asteroids from the station, if there's more than one asteroid on the same slope, sort them by distance.
+	targets := map[float64][]image.Point{}
+	for tar := range space {
+		slope := angleRad(best, tar)
+		if _, found := targets[slope]; found {
+			targets[slope] = append(targets[slope], tar)
+			sort.Slice(targets[slope], func(i, j int) bool {
+				return util.ManhattanDistance(best, targets[slope][i]) < util.ManhattanDistance(best, targets[slope][j])
+			})
+		} else {
+			targets[slope] = []image.Point{tar}
+		}
+	}
+
+	// Get a list of all slopes and sort it in order they will be targeted, the cannon will start aiming at slope atan2(-1, 0) since the
+	// coordinate system is "inverted", ie y=1 is south of y=0. 🤯
+	allSlopes := make([]float64, len(targets))
+	i = 0
+	for slope := range targets {
+		allSlopes[i] = slope
+		i++
+	}
+	sort.Float64s(allSlopes)
+	northPos := -1
+	for i, slope := range allSlopes {
+		if slope == math.Atan2(-1, 0) {
+			northPos = i
+			break
+		}
+	}
+	allSlopes = append(allSlopes[northPos:], allSlopes[:northPos]...)
+
+	// Spin the cannon and remove asteroids until 200 of them have been removed!
+	var lastDestroy image.Point
+outer:
+	for destroyed := 0; ; {
+		for _, slope := range allSlopes {
+			if destroyed >= 200 {
+				break outer
+			}
+			if len(targets[slope]) > 0 {
+				lastDestroy = targets[slope][0]
+				targets[slope] = targets[slope][1:]
+				destroyed++
+			}
+		}
+	}
+
+	return strconv.Itoa(part1), strconv.Itoa(lastDestroy.X*100 + lastDestroy.Y)
 }
 
 func pairs(lst []image.Point) [][2]image.Point {
