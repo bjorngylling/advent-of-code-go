@@ -41,7 +41,7 @@ func pairs(lst []*moonBody) [][2]*moonBody {
 	return pairs
 }
 
-func solve(input string, steps int) (string, string) {
+func part1(input string, steps int) string {
 	var moons []*moonBody
 	for _, ln := range strings.Split(input, "\n") {
 		m := &moonBody{}
@@ -86,8 +86,87 @@ func solve(input string, steps int) (string, string) {
 	for _, m := range moons {
 		totalEnergy += m.energy()
 	}
+	return strconv.Itoa(totalEnergy)
+}
 
-	return strconv.Itoa(totalEnergy), ""
+func gcd(a, b int) int {
+	for b != 0 {
+		t := b
+		b = a % b
+		a = t
+	}
+	return a
+}
+
+func lcm(a, b int, integers ...int) int {
+	result := a * b / gcd(a, b)
+
+	for i := 0; i < len(integers); i++ {
+		result = lcm(result, integers[i])
+	}
+
+	return result
+}
+
+type posAndVel1d struct {
+	pos, vel int
+}
+
+func findPeriod(bodies [4]posAndVel1d) int {
+	initialState := bodies
+	states := map[[4]posAndVel1d]struct{}{initialState: {}}
+	steps := 0
+	for ; ; steps++ {
+		for i := 0; i < len(bodies); i++ {
+			for j := i + 1; j < len(bodies); j++ {
+				switch {
+				case bodies[i].pos < bodies[j].pos:
+					bodies[i].vel++
+					bodies[j].vel--
+				case bodies[i].pos > bodies[j].pos:
+					bodies[i].vel--
+					bodies[j].vel++
+				}
+			}
+		}
+		for i := range bodies {
+			bodies[i].pos += bodies[i].vel
+		}
+		if _, found := states[bodies]; found && steps > 1 {
+			break
+		}
+		newState := bodies
+		states[newState] = struct{}{}
+	}
+	return steps + 1
+}
+
+func part2(input string) string {
+	var moons []*moonBody
+	for _, ln := range strings.Split(input, "\n") {
+		m := &moonBody{}
+		fmt.Sscanf(ln, "<x=%d, y=%d, z=%d>", &m.pos.x, &m.pos.y, &m.pos.z)
+		moons = append(moons, m)
+	}
+
+	var xPlane [4]posAndVel1d
+	var yPlane [4]posAndVel1d
+	var zPlane [4]posAndVel1d
+	for i, m := range moons {
+		xPlane[i] = posAndVel1d{pos: m.pos.x, vel: m.vel.x}
+		yPlane[i] = posAndVel1d{pos: m.pos.y, vel: m.vel.y}
+		zPlane[i] = posAndVel1d{pos: m.pos.z, vel: m.vel.z}
+	}
+
+	pX := findPeriod(xPlane)
+	pY := findPeriod(yPlane)
+	pZ := findPeriod(zPlane)
+
+	return strconv.Itoa(lcm(pX, pY, pZ))
+}
+
+func solve(input string, steps int) (string, string) {
+	return part1(input, steps), part2(input)
 }
 
 func main() {

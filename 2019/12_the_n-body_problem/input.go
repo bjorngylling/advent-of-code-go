@@ -28,7 +28,7 @@ var testPuzzles = []struct {
 		Puzzle:    puzzle,
 		Steps:     1000,
 		Solution1: "9999",
-		Solution2: "",
+		Solution2: "282399002133976",
 	},
 }
 
