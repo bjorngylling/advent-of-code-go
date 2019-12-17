@@ -39,10 +39,11 @@ type Computer struct {
 	relBase int
 	In      chan int
 	Out     chan int
+	SigInt  chan bool
 }
 
 func Init(program string, in chan int, out chan int) (Computer, error) {
-	computer := Computer{In: in, Out: out}
+	computer := Computer{In: in, Out: out, SigInt: make(chan bool, 1)}
 	for _, instr := range strings.Split(program, ",") {
 		computer.Mem = append(computer.Mem, util.GetInt(instr))
 	}
@@ -87,6 +88,11 @@ func (c *Computer) getAddr(mode paramMode, ptr int) int {
 
 func (c *Computer) Run() {
 	for instrPtr := 0; c.Mem[instrPtr] != exit; {
+		select {
+		case <-c.SigInt:
+			return
+		default:
+		}
 		op, p1Mode, p2Mode, tarMode := parseInstr(c.Mem[instrPtr])
 		switch op {
 		case add:
