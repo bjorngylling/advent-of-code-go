@@ -43,10 +43,28 @@ var testPuzzles = []struct {
 		Solution2:  "",
 	},
 	{
+		Puzzle:     "03036732577212944063491565474664",
+		PhaseCount: 100,
+		Solution1:  "",
+		Solution2:  "84462026",
+	},
+	{
+		Puzzle:     "02935109699940807407585447034323",
+		PhaseCount: 100,
+		Solution1:  "",
+		Solution2:  "78725270",
+	},
+	{
+		Puzzle:     "03081770884921959731165446850517",
+		PhaseCount: 100,
+		Solution1:  "",
+		Solution2:  "53553731",
+	},
+	{
 		Puzzle:     puzzle,
 		PhaseCount: 100,
 		Solution1:  "89576828",
-		Solution2:  "",
+		Solution2:  "23752579",
 	},
 }
 

@@ -31,13 +31,43 @@ func fft(signal []int, cycles int) []int {
 	return signal
 }
 
-func solve(input string, phaseCount int) (string, string) {
-	signal := fft(parse(input), phaseCount)
-	res := ""
-	for _, i := range signal[:8] {
-		res += strconv.Itoa(i)
+func fakeFft(signal []int, cycles int) []int {
+	for ; cycles > 0; cycles-- {
+		sum := 0
+		for n := len(signal) - 1; n >= 0; n-- {
+			sum += signal[n]
+			signal[n] = util.Abs(sum) % 10
+		}
 	}
-	return res, ""
+	return signal
+}
+
+func part1(input string, phaseCount int) string {
+	in := parse(input)
+	part1 := ""
+	for _, i := range fft(in, phaseCount)[:8] {
+		part1 += strconv.Itoa(i)
+	}
+	return part1
+}
+
+func part2(input string, phaseCount int) string {
+	in := parse(input)
+	offset := util.GetInt(input[:7])
+	signal := make([]int, len(in)*10000-offset)
+	for i := range signal {
+		signal[i] = in[(offset+i)%len(in)]
+	}
+	part2 := ""
+	for _, i := range fakeFft(signal, phaseCount)[:8] {
+		part2 += strconv.Itoa(i)
+	}
+
+	return part2
+}
+
+func solve(input string, phaseCount int) (string, string) {
+	return part1(input, phaseCount), part2(input, phaseCount)
 }
 
 func main() {
