@@ -13,7 +13,7 @@ func min(a, b int) int {
 	return a
 }
 
-// Return the smallest of all supplied ints
+// Min returns the smallest of all supplied ints
 func Min(ints ...int) int {
 	switch len(ints) {
 	case 0:
@@ -38,7 +38,7 @@ func max(a, b int) int {
 	return b
 }
 
-// Return the largest of all supplied ints
+// Max returns the largest of all supplied ints
 func Max(ints ...int) int {
 	switch len(ints) {
 	case 0:
@@ -73,11 +73,12 @@ func GetInt(in string) int {
 	return res
 }
 
-// RoundDown returns the given float rounded towards 0
-func Trunc(in float64) int {
-	return int(math.Trunc(in))
+// Trunc returns the integer value of x.
+func Trunc(x float64) int {
+	return int(math.Trunc(x))
 }
 
+// ManhattanDistance returns the manhattan distance between a and b
 func ManhattanDistance(a, b image.Point) int {
 	return Abs(b.X-a.X) + Abs(b.Y-a.Y)
 }
