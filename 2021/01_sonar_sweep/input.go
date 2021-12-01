@@ -19,6 +19,11 @@ var testPuzzles = []struct {
 		Solution1: "7",
 		Solution2: "5",
 	},
+	{
+		Puzzle:    puzzle,
+		Solution1: "1466",
+		Solution2: "1491",
+	},
 }
 
 var puzzle = `131

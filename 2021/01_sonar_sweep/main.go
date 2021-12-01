@@ -18,18 +18,10 @@ func part1(scan []int) int {
 	return incr
 }
 
-func sum(lst []int) int {
-	sum := 0
-	for _, ln := range lst {
-		sum += ln
-	}
-	return sum
-}
-
 func part2(scan []int) int {
 	incr := 0
-	for i := 0; i <= len(scan); i++ {
-		if i > 3 && sum(scan[i-3:i]) > sum(scan[i-4:i-1]) {
+	for i := 0; i < len(scan); i++ {
+		if i > 2 && scan[i] > scan[i-3] {
 			incr++
 		}
 	}
