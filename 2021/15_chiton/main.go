@@ -20,6 +20,7 @@ func dijkstra(w []int, width, height int, source, target image.Point) int {
 	q := make(PriorityQueue, width*height)
 	dist := make(map[image.Point]int)         // Position -> cost to move there from source
 	prev := make(map[image.Point]image.Point) // Position -> previous position
+	unvisited := make(map[image.Point]*Item, width*height)
 	w[0] = 0
 
 	for y := 0; y < height; y++ {
@@ -31,6 +32,7 @@ func dijkstra(w []int, width, height int, source, target image.Point) int {
 				priority: dist[p],
 				index:    x + y*width,
 			}
+			unvisited[i.value] = i
 			q[x+y*width] = i
 		}
 	}
@@ -39,18 +41,12 @@ func dijkstra(w []int, width, height int, source, target image.Point) int {
 	for q.Len() > 0 {
 		item := heap.Pop(&q).(*Item)
 		u := item.value
+		delete(unvisited, u)
 
 		// Check all neighbours of u if there is a shorter path there
 		for _, v := range neighbours(u) {
-			// Only v that are still in q
-			var vi *Item
-			for _, i := range q {
-				if i.value.Eq(v) {
-					vi = i
-					break
-				}
-			}
-			if vi == nil {
+			// Only v that are unvisited and within bounds
+			if _, ok := unvisited[v]; !ok || v.X < 0 || v.X >= width || v.Y < 0 || v.Y >= height {
 				continue
 			}
 			// Distance from source to v through u
@@ -58,10 +54,9 @@ func dijkstra(w []int, width, height int, source, target image.Point) int {
 			if alt < dist[v] {
 				dist[v] = alt
 				prev[v] = u
-				q.update(vi, v, alt)
+				q.update(unvisited[v], v, alt)
 			}
 		}
-		fmt.Printf("\r%d", q.Len())
 	}
 
 	path := map[image.Point]struct{}{}
