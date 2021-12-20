@@ -1,15 +1,12 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
 	"image"
-	"math"
 	"strconv"
 	"strings"
 	"time"
-
-	"net/http"
-	_ "net/http/pprof"
 
 	"github.com/bjorngylling/advent-of-code/util"
 )
@@ -20,39 +17,51 @@ func neighbours(p image.Point) [4]image.Point {
 }
 
 func dijkstra(w []int, width, height int, source, target image.Point) int {
-	var q []image.Point                       // List containing all unvisited positions
+	q := make(PriorityQueue, width*height)
 	dist := make(map[image.Point]int)         // Position -> cost to move there from source
 	prev := make(map[image.Point]image.Point) // Position -> previous position
+	w[0] = 0
 
-	for x := 0; x < width; x++ {
-		for y := 0; y < height; y++ {
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
 			p := image.Pt(x, y)
-			dist[p] = math.MaxInt
-			q = append(q, p)
+			dist[p] = height * width * 10
+			i := &Item{
+				value:    image.Pt(x, y),
+				priority: dist[p],
+				index:    x + y*width,
+			}
+			q[x+y*width] = i
 		}
 	}
+	heap.Init(&q)
 	dist[source] = 0
-	for len(q) > 0 {
-		// Find the unvisited position with the lowest distance from source
-		iu := -1
-		for i, pos := range q {
-			if iu == -1 || dist[pos] < dist[q[iu]] {
-				iu = i
-			}
-		}
-		u := q[iu]
-		q = append(q[:iu], q[iu+1:]...)
+	for q.Len() > 0 {
+		item := heap.Pop(&q).(*Item)
+		u := item.value
 
 		// Check all neighbours of u if there is a shorter path there
 		for _, v := range neighbours(u) {
-			if u.X >= 0 && u.X < width && u.Y >= 0 && u.Y < height {
-				alt := dist[u] + w[u.X+u.Y*width]
-				if alt < dist[v] {
-					dist[v] = alt
-					prev[v] = u
+			// Only v that are still in q
+			var vi *Item
+			for _, i := range q {
+				if i.value.Eq(v) {
+					vi = i
+					break
 				}
 			}
+			if vi == nil {
+				continue
+			}
+			// Distance from source to v through u
+			alt := dist[u] + w[v.X+v.Y*width]
+			if alt < dist[v] {
+				dist[v] = alt
+				prev[v] = u
+				q.update(vi, v, alt)
+			}
 		}
+		fmt.Printf("\r%d", q.Len())
 	}
 
 	path := map[image.Point]struct{}{}
@@ -64,7 +73,7 @@ func dijkstra(w []int, width, height int, source, target image.Point) int {
 		}
 	}
 
-	return dist[target] - w[source.X+source.Y*width] + w[target.X+target.Y*width]
+	return dist[target]
 }
 
 func extendMap(w []int, width, height int) []int {
@@ -103,8 +112,6 @@ func solve(input string) (string, string) {
 }
 
 func main() {
-	go http.ListenAndServe("localhost:8080", nil)
-
 	start := time.Now()
 	part1, part2 := solve(puzzle)
 	elapsed := time.Since(start)
